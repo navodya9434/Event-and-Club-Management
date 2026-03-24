@@ -1,0 +1,173 @@
+.event-profile {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meta {
+  color: #666;
+  margin-top: 5px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #2d6cdf;
+  color: white;
+}
+
+.btn.light {
+  background: #eaeef7;
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.stat-card h2 {
+  margin: 10px 0;
+}
+
+.positive {
+  color: green;
+}
+
+/* Grid */
+.grid {
+  display: flex;
+  gap: 20px;
+}
+
+.left {
+  flex: 2;
+}
+
+.right {
+  flex: 1;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.mini-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Upload */
+.upload-box {
+  border: 2px dashed #ccc;
+  padding: 40px;
+  text-align: center;
+  border-radius: 12px;
+  background: white;
+}
+
+/* Right side */
+.highlight-card {
+  background: #1d4ed8;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  margin-top: 15px;
+}
+
+.progress-bar div {
+  background: rgba(255,255,255,0.3);
+  height: 6px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.progress-bar div div {
+  background: white;
+  height: 100%;
+  border-radius: 5px;
+}
+
+/* Activity */
+.activity {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.done {
+  color: green;
+}
+
+/* Gallery */
+.gallery {
+  margin-top: 30px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.add-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Replace grid with full width */
+.full {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
