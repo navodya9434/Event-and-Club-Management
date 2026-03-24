@@ -3,6 +3,26 @@ import "./homePage.css";
 import home2 from "../assets/home2.jpg";
 import home3 from "../assets/home3.jpg";
 import home4 from "../assets/home4.jpg";
+import { getActiveAdvertisements } from "../services/api";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, "");
+
+function resolveImageUrl(imageUrl) {
+  if (!imageUrl) return "";
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+  if (imageUrl.startsWith("/")) {
+    return `${API_ORIGIN}${imageUrl}`;
+  }
+  return `${API_ORIGIN}/${imageUrl}`;
+}
+
+function getVisibleCards() {
+  return 1;
+}
 
 
 
@@ -345,6 +365,153 @@ const EventsSection = () => (
   </section>
 );
 
+// ─── Advertisements Section ──────────────────────────────────────────────────
+const AllAdvertisementsSection = () => {
+  const [advertisements, setAdvertisements] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [visibleCards, setVisibleCards] = useState(getVisibleCards);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
+
+  useEffect(() => {
+    async function loadAdvertisements() {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await getActiveAdvertisements();
+        const items = (response.data || []).filter(
+          (ad) => String(ad?.status || "").toUpperCase() !== "EXPIRED"
+        );
+        setAdvertisements(items);
+        setCurrentIndex(0);
+      } catch (apiError) {
+        setError(apiError.response?.data?.message || "Failed to load advertisements.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAdvertisements();
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setVisibleCards(getVisibleCards());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+    setIsTransitionEnabled(false);
+    const frameId = window.requestAnimationFrame(() => setIsTransitionEnabled(true));
+    return () => window.cancelAnimationFrame(frameId);
+  }, [advertisements.length, visibleCards]);
+
+  useEffect(() => {
+    if (isPaused || advertisements.length <= visibleCards) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setIsTransitionEnabled(true);
+      setCurrentIndex((previous) => previous + 1);
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, [advertisements.length, isPaused, visibleCards]);
+
+  const slidesToClone = Math.min(visibleCards, advertisements.length);
+  const carouselItems =
+    advertisements.length > 0
+      ? [...advertisements, ...advertisements.slice(0, slidesToClone)]
+      : [];
+  const activeDotIndex =
+    advertisements.length > 0 ? currentIndex % advertisements.length : 0;
+
+  function handleTrackTransitionEnd() {
+    if (currentIndex < advertisements.length) {
+      return;
+    }
+
+    setIsTransitionEnabled(false);
+    setCurrentIndex(0);
+  }
+
+  return (
+    <section className="home-ads-section">
+      <div className="home-ads-header">
+        <p className="section-tag">Latest Promotions</p>
+        <h2 className="section-title">
+          All <span className="accent-pink">Advertisements</span>
+        </h2>
+      </div>
+
+      {loading && <p className="home-ads-message">Loading advertisements...</p>}
+      {error && <p className="home-ads-message home-ads-message--error">{error}</p>}
+      {!loading && !error && advertisements.length === 0 && (
+        <p className="home-ads-message">No advertisements available right now.</p>
+      )}
+
+      {!loading && !error && advertisements.length > 0 && (
+        <div
+          className="home-ads-carousel"
+          style={{ "--ads-per-view": visibleCards }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div
+            className="home-ads-carousel__track"
+            style={{
+              transform: `translateX(-${(currentIndex * 100) / visibleCards}%)`,
+              transition: isTransitionEnabled ? "transform 0.55s ease" : "none"
+            }}
+            onTransitionEnd={handleTrackTransitionEnd}
+          >
+            {carouselItems.map((ad, index) => (
+              <div key={`${ad.id}-${index}`} className="home-ads-carousel__slide">
+                <article className="home-ad-card">
+                  <img
+                    src={resolveImageUrl(ad.imageUrl)}
+                    alt={ad.title}
+                    className="home-ad-card__image"
+                    onError={(event) => {
+                      event.currentTarget.src =
+                        "https://via.placeholder.com/640x360?text=Advertisement";
+                    }}
+                  />
+                  <div className="home-ad-card__body">
+                    <h3>{ad.title}</h3>
+                    <p>{ad.description}</p>
+                  </div>
+                </article>
+              </div>
+            ))}
+          </div>
+
+          {advertisements.length > visibleCards && (
+            <div className="home-ads-carousel__dots" aria-label="Advertisement slides">
+              {advertisements.map((ad, index) => (
+                <button
+                  key={ad.id}
+                  type="button"
+                  className={`home-ads-carousel__dot ${index === activeDotIndex ? "is-active" : ""}`}
+                  onClick={() => {
+                    setIsTransitionEnabled(true);
+                    setCurrentIndex(index);
+                  }}
+                  aria-label={`Go to advertisement ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+};
+
 // ─── Footer ───────────────────────────────────────────────────────────────────
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -434,6 +601,7 @@ export default function HomePage() {
         <ServicesSection />
         <StatsSection />
         <EventsSection />
+        <AllAdvertisementsSection />
         <Footer />
       </main>
       <AdTickerBar />
