@@ -1,0 +1,360 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Wrapper */
+.ep-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fb;
+}
+
+/* Sidebar */
+.ep-sidebar {
+  width: 240px;
+  background: #0d1b4c;
+  color: white;
+  padding: 25px 20px;
+  
+  /* Make sidebar sticky */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+}
+
+.ep-logo {
+  margin-bottom: 40px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+.ep-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.ep-menu li {
+  padding: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.ep-menu li:hover {
+  background: #1e3a8a;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.ep-active {
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  font-weight: 600;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* Buttons */
+.ep-btn-primary {
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  color: white;
+  padding: 12px;
+  border: none;
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+}
+
+.ep-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37,99,235,0.4);
+}
+
+/* Main Content */
+.ep-main {
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+}
+
+/* Title */
+.ep-title {
+  font-size: 28px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* Cards */
+.ep-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.ep-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+
+/* Top Grid */
+.ep-top-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+}
+
+/* Inputs */
+.ep-input,
+.ep-input-small,
+.ep-textarea,
+.ep-range,
+.ep-upload-label {
+  font-family: inherit;
+}
+
+.ep-input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.ep-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37,99,235,0.3);
+  outline: none;
+}
+
+.ep-input-small {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.ep-textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.ep-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Upload Box */
+.ep-upload-box {
+  margin-top: 15px;
+}
+
+.ep-upload-label {
+  display: block;
+  padding: 14px;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  color: #555;
+}
+
+.ep-upload-label:hover {
+  background: #f0f0f0;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.ep-upload-label input {
+  display: none;
+}
+
+/* Event Status Card */
+.ep-status-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  margin-bottom: 25px;
+}
+
+.ep-status-title {
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.ep-status-display {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* Tickets Table */
+.ep-ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ep-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.ep-table th,
+.ep-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.ep-add-btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  border: 2px dashed #aaa;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.ep-add-btn:hover {
+  background: #f0f0f0;
+  border-color: #2563eb;
+}
+
+/* Media Upload */
+.ep-media-grid {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.ep-media-item {
+  width: 100px;
+  height: 80px;
+  background: #ddd;
+  border-radius: 8px;
+}
+
+.ep-media-upload {
+  width: 100px;
+  height: 80px;
+  border: 2px dashed #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.ep-media-upload:hover {
+  background: #f0f0f0;
+  border-color: #2563eb;
+}
+
+/* Range Input */
+.ep-range {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .ep-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ep-sidebar {
+    width: 200px;
+  }
+}
+
+/* Sticky Top Event Status Bar */
+/* Sticky Top Event Status Bar */
+.ep-top-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  padding: 20px 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  margin-bottom: 25px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.ep-top-status div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ep-top-status h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.ep-top-status span {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Countdown styling */
+.ep-countdown {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fffacd;
+  text-align: right;
+}
+.ep-event-name {
+  color: #1e293b; /* dark color */
+}
+
+/* Flashing when event is live */
+.ep-countdown.live {
+  animation: flash 1s infinite;
+  color: #ff0000;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
