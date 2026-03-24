@@ -1,0 +1,242 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Dashboard Wrapper */
+.dp-dashboard {
+  display: flex;
+  background: #f0f4fb; /* softer background */
+  min-height: 100vh;
+}
+
+/* Sidebar */
+/* Sidebar */
+.dp-sidebar {
+  width: 240px;
+  background: #ffffff;
+  padding: 25px 20px;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+  
+  /* Make sidebar fixed/sticky */
+  position: sticky;
+  top: 0;
+  height: 100vh; /* full viewport height */
+  overflow-y: auto; /* scroll if content exceeds sidebar height */
+}
+
+.dp-logo {
+  margin-bottom: 40px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d6cdf;
+}
+
+.dp-menu {
+  list-style: none;
+}
+
+.dp-menu li {
+  padding: 14px 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dp-menu li.dp-active,
+.dp-menu li:hover {
+  background: #2d6cdf;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(45,108,223,0.2);
+}
+
+/* Main Content */
+.dp-main {
+  flex: 1;
+  padding: 25px 50px;
+  overflow-y: auto;
+}
+
+/* Topbar */
+.dp-topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.dp-topbar input.dp-search {
+  width: 60%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.dp-create-btn {
+  background: linear-gradient(135deg, #2d6cdf, #60a5fa);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(45,108,223,0.3);
+  transition: all 0.2s ease;
+}
+
+.dp-create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(45,108,223,0.4);
+}
+
+/* Headings */
+.dp-title {
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #222;
+}
+
+.dp-subtitle {
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.dp-section-title {
+  margin: 40px 0 20px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Stats */
+.dp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.dp-card {
+  background: linear-gradient(135deg, #ffffff, #f9fbff);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dp-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+}
+
+.dp-card h4 {
+  color: #555;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.dp-card h2 {
+  margin-bottom: 8px;
+  font-size: 28px;
+  color: #222;
+}
+
+.dp-positive {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+/* Events */
+.dp-events {
+  display: flex;
+  gap: 25px;
+}
+
+.dp-event-card {
+  display: flex;
+  gap: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 45%;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.dp-event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.dp-event-card img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.dp-progress {
+  height: 8px;
+  background: #eee;
+  border-radius: 6px;
+  margin: 10px 0;
+}
+
+.dp-progress div {
+  height: 100%;
+  background: linear-gradient(135deg, #2d6cdf, #60a5fa);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+/* Pending */
+.dp-pending {
+  display: flex;
+  gap: 25px;
+}
+
+.dp-pending-card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  flex: 1;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dp-pending-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Past Events */
+.dp-past {
+  margin-top: 20px;
+}
+
+.dp-past-item {
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 20px;
+  margin-bottom: 12px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.dp-past-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.dp-clickable {
+  cursor: pointer;
+}
