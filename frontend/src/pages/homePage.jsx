@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./homePage.css";
+import { Link } from "react-router-dom";
 import home2 from "../assets/home2.jpg";
 import home3 from "../assets/home3.jpg";
 import home4 from "../assets/home4.jpg";
@@ -138,10 +139,28 @@ const Navbar = () => {
           <span className="navbar__logo-text">Campus<span className="accent">Hub</span></span>
         </a>
         <ul className={`navbar__links ${menuOpen ? "navbar__links--open" : ""}`}>
-          {["Home","About Us","Events","Clubs","Contact Us"].map(item => (
-            <li key={item}><a href="#" className={item === "Home" ? "active" : ""}>{item}</a></li>
-          ))}
-        </ul>
+  {["Home", "About Us", "Events", "Clubs", "Contact Us"].map(item => {
+    
+    let path = "/";
+
+    if (item === "Home") path = "/";
+    else if (item === "Events") path = "/events";
+    else if (item === "About Us") path = "/create-club";
+    else if (item === "Clubs") path = "/clubs";
+    else if (item === "Contact Us") path = "/e-dashboard";
+
+    return (
+      <li key={item}>
+        <Link 
+          to={path} 
+          className={item === "Home" ? "active" : ""}
+        >
+          {item}
+        </Link>
+      </li>
+    );
+  })}
+</ul>
         <div className="navbar__actions">
           <button className="navbar__search" aria-label="Search"><SearchIcon /></button>
   
@@ -149,8 +168,7 @@ const Navbar = () => {
   <a href="#" className="btn btn--pink navbar__cta">REGISTER NOW &rsaquo;</a>
   
   {/* Login Button */}
-  <a href="#" className="btn btn--blue navbar__cta">LOGIN &rsaquo;</a>
-  
+<Link to="/login" className="btn btn--blue navbar__cta">LOGIN &rsaquo;</Link>  
   <button
     className="navbar__hamburger"
     onClick={() => setMenuOpen(o => !o)}
