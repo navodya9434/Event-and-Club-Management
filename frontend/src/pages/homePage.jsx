@@ -3,6 +3,8 @@ import "./homePage.css";
 import home2 from "../assets/home2.jpg";
 import home3 from "../assets/home3.jpg";
 import home4 from "../assets/home4.jpg";
+import { Link } from "react-router-dom";
+
 
 
 
@@ -147,9 +149,14 @@ const Navbar = () => {
   
   {/* Register Now Button */}
   <a href="#" className="btn btn--pink navbar__cta">REGISTER NOW &rsaquo;</a>
-  
+
   {/* Login Button */}
-  <a href="#" className="btn btn--blue navbar__cta">LOGIN &rsaquo;</a>
+<Link to="/login" className="btn btn--blue navbar__cta">
+  LOGIN &rsaquo;
+</Link>
+
+  
+
   
   <button
     className="navbar__hamburger"
