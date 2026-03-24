@@ -153,7 +153,7 @@ const Navbar = () => {
   {/* Login Button */}
 <Link to="/login" className="btn btn--blue navbar__cta">
   LOGIN &rsaquo;
-</Link>
+ </Link>
 
   
 
