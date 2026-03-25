@@ -1,5 +1,103 @@
-/* Permission document upload */
-.file-label {
+:root {
+  --evc-primary: #4f46e5;
+  --evc-secondary: #6366f1;
+  --evc-white: #ffffff;
+  --evc-gray: #f3f4f6;
+  --evc-font-body: 'Inter', sans-serif;
+  --evc-font-display: 'Poppins', sans-serif;
+}
+
+body {
+  font-family: var(--evc-font-body);
+  margin: 0;
+  padding: 0;
+}
+
+/* Page */
+.evc-page {
+  background: linear-gradient(to right, #eef2ff, #f8fafc);
+  min-height: 100vh;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Container */
+.evc-container {
+  width: 100%;
+  max-width: 650px;
+  background: var(--evc-white);
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.evc-title {
+  font-family: var(--evc-font-display);
+  font-size: 28px;
+  color: var(--evc-primary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form Card */
+.evc-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Form Group */
+.evc-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.evc-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.evc-form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.evc-form-group input,
+.evc-form-group select,
+.evc-form-group textarea {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.evc-form-group input:focus,
+.evc-form-group select:focus,
+.evc-form-group textarea:focus {
+  outline: none;
+  border-color: var(--evc-primary);
+  box-shadow: 0 0 0 2px rgba(79,70,229,0.2);
+}
+
+.evc-form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Error Text */
+.evc-error {
+  font-size: 12px;
+  color: #b91c1c;
+  margin-top: 4px;
+}
+
+/* File Upload */
+.evc-file-label {
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -11,11 +109,35 @@
   color: #555;
 }
 
-.file-label input {
+.evc-file-label input {
   display: none;
 }
 
-.file-label:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+.evc-file-label:hover {
+  border-color: var(--evc-primary);
+  color: var(--evc-primary);
+}
+
+.evc-file-name {
+  font-size: 13px;
+  color: #374151;
+  margin-top: 5px;
+}
+
+/* Submit Button */
+.evc-btn {
+  padding: 14px 0;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--evc-primary), var(--evc-secondary));
+  color: var(--evc-white);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.evc-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79,70,229,0.3);
 }
