@@ -1,0 +1,430 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #f8f9fa;
+  color: #333;
+}
+
+/* Dashboard Layout */
+.cm-dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.cm-sidebar {
+  width: 260px;
+  background: #f1f3f5;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e9ecef;
+}
+
+.cm-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.cm-logo-icon {
+  font-size: 32px;
+}
+
+.cm-logo-sub {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #666;
+}
+
+.cm-nav {
+  flex: 1;
+}
+
+.cm-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.cm-nav-item:hover {
+  background: #e9ecef;
+}
+
+.cm-active {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.cm-sidebar-bottom {
+  margin-top: auto;
+}
+
+.cm-create-btn {
+  width: 100%;
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cm-create-btn:hover {
+  background: #1565c0;
+}
+
+/* Main Content */
+.cm-main-content {
+  flex: 1;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Top Bar */
+.cm-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.cm-title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.cm-search-bar input {
+  width: 380px;
+  padding: 12px 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.cm-user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cm-notification {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.cm-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cm-user-text {
+  text-align: right;
+  line-height: 1.3;
+}
+
+.cm-avatar {
+  width: 44px;
+  height: 44px;
+  background: #e3f2fd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Welcome Banner */
+.cm-welcome-banner {
+  background: linear-gradient(135deg, #0d2538, #1e3a5f);
+  color: white;
+  padding: 40px 48px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cm-welcome-banner h1 {
+  font-size: 42px;
+  margin-bottom: 16px;
+}
+
+.cm-welcome-banner p {
+  font-size: 17px;
+  opacity: 0.95;
+  line-height: 1.5;
+  max-width: 620px;
+}
+
+.cm-stats {
+  position: absolute;
+  right: 48px;
+  top: 40px;
+  display: flex;
+  gap: 16px;
+}
+
+.cm-stat-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  border-radius: 16px;
+  text-align: center;
+  min-width: 140px;
+}
+
+.cm-stat-label {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.cm-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Sections */
+.cm-section {
+  margin-bottom: 48px;
+}
+
+.cm-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cm-section-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.cm-view-all {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cm-review-count {
+  background: #ff9800;
+  color: white;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Clubs Grid */
+.cm-clubs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.cm-club-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  border: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.cm-club-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.cm-status {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cm-approved {
+  background: #4caf50;
+  color: white;
+}
+
+.cm-club-card h3 {
+  margin: 8px 0 12px;
+  font-size: 19px;
+}
+
+.cm-club-card p {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.cm-members {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cm-avatars span {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: #e3f2fd;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 32px;
+  font-size: 16px;
+  border: 2px solid white;
+}
+
+.cm-member-count {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Pending Approvals */
+.cm-pending-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cm-pending-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.cm-pending-icon {
+  font-size: 40px;
+  width: 60px;
+}
+
+.cm-pending-info h4 {
+  margin-bottom: 4px;
+}
+
+.cm-pending-info p {
+  color: #777;
+  font-size: 14px;
+}
+
+.cm-stage {
+  margin-left: auto;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cm-review-btn {
+  margin-left: 16px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Upcoming Meetings */
+.cm-upcoming-meetings {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.cm-meeting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.cm-meeting-item {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.cm-meeting-date {
+  text-align: center;
+  min-width: 70px;
+}
+
+.cm-day {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1976d2;
+}
+
+.cm-month {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+}
+
+.cm-meeting-details h4 {
+  margin-bottom: 4px;
+}
+
+.cm-add-calendar {
+  width: 100%;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 2px dashed #bbb;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cm-stats {
+    position: static;
+    margin-top: 24px;
+  }
+  .cm-welcome-banner {
+    padding-bottom: 100px;
+  }
+}
