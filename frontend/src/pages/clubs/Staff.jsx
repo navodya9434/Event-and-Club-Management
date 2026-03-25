@@ -84,91 +84,91 @@ const StaffProfiles = () => {
   };
 
   return (
-    <div className="staff-profiles-page">
+    <div className="ss-staff-profiles-page">
       {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="logo">
-          <div className="logo-icon">🎓</div>
+      <aside className="ss-sidebar">
+        <div className="ss-logo">
+          <div className="ss-logo-icon">🎓</div>
           <div>
-            <div className="brand">Academic Editorial</div>
-            <div className="sub-brand">CLUB ADMINISTRATION</div>
+            <div className="ss-brand">Academic Editorial</div>
+            <div className="ss-sub-brand">CLUB ADMINISTRATION</div>
           </div>
         </div>
 
-        <nav className="nav-menu">
-          <a href="#" className="nav-item">📊 Dashboard</a>
-          <a href="#" className="nav-item">👥 Members</a>
-          <a href="#" className="nav-item active">👔 Staff</a>
-          <a href="#" className="nav-item">📅 Meetings</a>
-          <a href="#" className="nav-item">🛍️ Merchandise</a>
+        <nav className="ss-nav-menu">
+          <a href="#" className="ss-nav-item">📊 Dashboard</a>
+          <a href="#" className="ss-nav-item">👥 Members</a>
+          <a href="#" className="ss-nav-item active">👔 Staff</a>
+          <a href="#" className="ss-nav-item">📅 Meetings</a>
+          <a href="#" className="ss-nav-item">🛍️ Merchandise</a>
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="main-content">
-        <header className="top-bar">
-          <div className="page-title">
+      <main className="ss-main-content">
+        <header className="ss-top-bar">
+          <div className="ss-page-title">
             <h1>Staff Profiles</h1>
             <p>Managing the core operational team of the Academic Editorial.</p>
           </div>
 
-          <div className="top-actions">
-            <div className="filter-container">
+          <div className="ss-top-actions">
+            <div className="ss-filter-container">
               <input
                 type="text"
                 placeholder="Filter by position..."
-                className="filter-input"
+                className="ss-filter-input"
               />
-              <button className="search-icon">🔍</button>
+              <button className="ss-search-icon">🔍</button>
             </div>
-            <button className="notification-btn">🛎️</button>
+            <button className="ss-notification-btn">🛎️</button>
           </div>
         </header>
 
         {/* Staff Grid */}
-        <div className="staff-grid">
+        <div className="ss-staff-grid">
           {staffMembers.map((staff) => (
-            <div key={staff.id} className="staff-card">
-              <div className="avatar-container">
-                <img src={staff.avatar} alt={staff.name} className="staff-avatar" />
+            <div key={staff.id} className="ss-staff-card">
+              <div className="ss-avatar-container">
+                <img src={staff.avatar} alt={staff.name} className="ss-staff-avatar" />
               </div>
 
-              <div className="staff-info">
-                <div className="name-age">
+              <div className="ss-staff-info">
+                <div className="ss-name-age">
                   <h3>{staff.name}</h3>
-                  <span className="age">{staff.age} Yrs</span>
+                  <span className="ss-age">{staff.age} Yrs</span>
                 </div>
 
-                <span className={`role-badge ${staff.roleColor}`}>
+                <span className={`ss-role-badge ${staff.roleColor}`}>
                   {staff.role}
                 </span>
 
-                <div className="contact-info">
-                  <div className="contact-row">
-                    <span className="icon">✉️</span>
+                <div className="ss-contact-info">
+                  <div className="ss-contact-row">
+                    <span className="ss-icon">✉️</span>
                     <span>{staff.email}</span>
                   </div>
                   {staff.phone && (
-                    <div className="contact-row">
-                      <span className="icon">📞</span>
+                    <div className="ss-contact-row">
+                      <span className="ss-icon">📞</span>
                       <span>{staff.phone}</span>
                     </div>
                   )}
                   {staff.location && (
-                    <div className="contact-row">
-                      <span className="icon">📍</span>
+                    <div className="ss-contact-row">
+                      <span className="ss-icon">📍</span>
                       <span>{staff.location}</span>
                     </div>
                   )}
                   {staff.schedule && (
-                    <div className="contact-row">
-                      <span className="icon">🕒</span>
+                    <div className="ss-contact-row">
+                      <span className="ss-icon">🕒</span>
                       <span>{staff.schedule}</span>
                     </div>
                   )}
                   {staff.responsibility && (
-                    <div className="contact-row">
-                      <span className="icon">📋</span>
+                    <div className="ss-contact-row">
+                      <span className="ss-icon">📋</span>
                       <span>{staff.responsibility}</span>
                     </div>
                   )}
@@ -178,8 +178,8 @@ const StaffProfiles = () => {
           ))}
 
           {/* Add Staff Card */}
-          <div className="add-staff-card" onClick={() => setShowAddForm(true)}>
-            <div className="add-icon">👤+</div>
+          <div className="ss-add-staff-card" onClick={() => setShowAddForm(true)}>
+            <div className="ss-add-icon">👤+</div>
             <h3>Add Staff Member</h3>
             <p>Invite a new team member to the administration board.</p>
           </div>
@@ -188,19 +188,19 @@ const StaffProfiles = () => {
 
       {/* Add Staff Modal with Image Upload */}
       {showAddForm && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="ss-modal-overlay">
+          <div className="ss-modal">
             <h2>Add New Staff Member</h2>
 
-            <form className="add-staff-form" onSubmit={handleSubmit}>
+            <form className="ss-add-staff-form" onSubmit={handleSubmit}>
               {/* Image Upload */}
-              <div className="image-upload-group">
+              <div className="ss-image-upload-group">
                 <label>Profile Photo</label>
-                <div className="upload-area">
+                <div className="ss-upload-area">
                   {previewImage ? (
-                    <img src={previewImage} alt="Preview" className="image-preview" />
+                    <img src={previewImage} alt="Preview" className="ss-image-preview" />
                   ) : (
-                    <div className="upload-placeholder">
+                    <div className="ss-upload-placeholder">
                       <span>📸</span>
                       <p>Click to upload photo</p>
                     </div>
@@ -209,12 +209,12 @@ const StaffProfiles = () => {
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="file-input"
+                    className="ss-file-input"
                   />
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className="ss-form-group">
                 <label>Full Name</label>
                 <input
                   type="text"
@@ -226,8 +226,8 @@ const StaffProfiles = () => {
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className="ss-form-row">
+                <div className="ss-form-group">
                   <label>Age</label>
                   <input
                     type="number"
@@ -238,7 +238,7 @@ const StaffProfiles = () => {
                     required
                   />
                 </div>
-                <div className="form-group">
+                <div className="ss-form-group">
                   <label>Position</label>
                   <select
                     name="position"
@@ -256,7 +256,7 @@ const StaffProfiles = () => {
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className="ss-form-group">
                 <label>Email Address</label>
                 <input
                   type="email"
@@ -268,7 +268,7 @@ const StaffProfiles = () => {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="ss-form-group">
                 <label>Phone Number</label>
                 <input
                   type="tel"
@@ -279,7 +279,7 @@ const StaffProfiles = () => {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="ss-form-group">
                 <label>Office / Location</label>
                 <input
                   type="text"
@@ -290,10 +290,10 @@ const StaffProfiles = () => {
                 />
               </div>
 
-              <div className="modal-actions">
+              <div className="ss-modal-actions">
                 <button
                   type="button"
-                  className="cancel-btn"
+                  className="ss-cancel-btn"
                   onClick={() => {
                     setShowAddForm(false);
                     setPreviewImage(null);
@@ -301,7 +301,7 @@ const StaffProfiles = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="submit-btn">
+                <button type="submit" className="ss-submit-btn">
                   Add Staff Member
                 </button>
               </div>
