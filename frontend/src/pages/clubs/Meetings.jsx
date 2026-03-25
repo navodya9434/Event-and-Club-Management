@@ -3,6 +3,76 @@ import './Meetings.css';
 
 const MeetingsManagement = () => {
   const [audience, setAudience] = useState('both');
+  const [meetingData, setMeetingData] = useState({
+    title: '',
+    date: '',
+    time: '',
+    location: '',
+  });
+  const [errors, setErrors] = useState({});
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    // Prevent non-letter characters for title
+    if (name === 'title') {
+      if (/[^A-Za-z ]/.test(value)) return; // ignore invalid input
+    }
+
+    setMeetingData({ ...meetingData, [name]: value });
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    // Title validation: letters and spaces only
+    if (!meetingData.title.trim()) newErrors.title = "Meeting title is required";
+    else if (!/^[A-Za-z ]+$/.test(meetingData.title.trim()))
+      newErrors.title = "Only letters and spaces allowed in title";
+
+    // Date & Time validation
+    if (!meetingData.date) newErrors.date = "Date is required";
+    if (!meetingData.time) newErrors.time = "Time is required";
+    if (meetingData.date && meetingData.time) {
+      const now = new Date();
+      const selectedDateTime = new Date(meetingData.date + 'T' + meetingData.time);
+      if (selectedDateTime < now) newErrors.date = "Date & time cannot be in the past";
+    }
+
+    // Location
+    if (!meetingData.location.trim()) newErrors.location = "Location/Link is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      console.log("Scheduled Meeting:", { ...meetingData, audience });
+      alert("Meeting scheduled successfully! (Check console for data)");
+      setMeetingData({ title: '', date: '', time: '', location: '' });
+      setErrors({});
+      setAudience('both');
+    }
+  };
+
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  // Get current time in HH:MM format
+  const getCurrentTime = () => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  };
 
   return (
     <div className="meetings-management-page">
@@ -29,8 +99,7 @@ const MeetingsManagement = () => {
       <main className="m-main-content">
         {/* Top Bar */}
         <header className="m-top-bar">
-          <div className="m-top-left">
-          </div>
+          <div className="m-top-left"></div>
           <div className="m-search-container">
             <input
               type="text"
@@ -38,7 +107,6 @@ const MeetingsManagement = () => {
               className="m-search-input"
             />
           </div>
-          
         </header>
 
         {/* Page Header */}
@@ -55,69 +123,99 @@ const MeetingsManagement = () => {
               <h2>Schedule New Session</h2>
             </div>
 
-            <div className="m-form-group">
-              <label>MEETING TITLE</label>
-              <input
-                type="text"
-                placeholder="e.g., Editorial Board Sync"
-                className="m-title-input"
-              />
-            </div>
-
-            <div className="m-form-row">
+            <form onSubmit={handleSubmit}>
               <div className="m-form-group">
-                <label>DATE</label>
-                <input type="text" placeholder="mm/dd/yyyy" className="m-date-input" />
+                <label>MEETING TITLE</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={meetingData.title}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Editorial Board Sync"
+                  className="m-title-input"
+                  required
+                />
+                {errors.title && <span className="m-error">{errors.title}</span>}
               </div>
+
+              <div className="m-form-row">
+                <div className="m-form-group">
+                  <label>DATE</label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={meetingData.date}
+                    onChange={handleInputChange}
+                    className="m-date-input"
+                    min={getTodayDate()}
+                    required
+                  />
+                  {errors.date && <span className="m-error">{errors.date}</span>}
+                </div>
+                <div className="m-form-group">
+                  <label>TIME</label>
+                  <input
+                    type="time"
+                    name="time"
+                    value={meetingData.time}
+                    onChange={handleInputChange}
+                    className="m-time-input"
+                    min={meetingData.date === getTodayDate() ? getCurrentTime() : '00:00'}
+                    required
+                  />
+                  {errors.time && <span className="m-error">{errors.time}</span>}
+                </div>
+              </div>
+
               <div className="m-form-group">
-                <label>TIME</label>
-                <input type="text" placeholder="--:-- --" className="m-time-input" />
+                <label>LOCATION / LINK</label>
+                <input
+                  type="text"
+                  name="location"
+                  value={meetingData.location}
+                  onChange={handleInputChange}
+                  placeholder="Room 402 or Zoom URL"
+                  className="m-location-input"
+                  required
+                />
+                {errors.location && <span className="m-error">{errors.location}</span>}
               </div>
-            </div>
 
-            <div className="m-form-group">
-              <label>LOCATION / LINK</label>
-              <input
-                type="text"
-                placeholder="Room 402 or Zoom URL"
-                className="m-location-input"
-              />
-            </div>
-
-            <div className="m-audience-section">
-              <label>AUDIENCE SELECTION</label>
-              <div className="m-audience-options">
-                <label className={`m-audience-option ${audience === 'staff' ? 'selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="audience"
-                    checked={audience === 'staff'}
-                    onChange={() => setAudience('staff')}
-                  />
-                  Staff Only
-                </label>
-                <label className={`m-audience-option ${audience === 'members' ? 'selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="audience"
-                    checked={audience === 'members'}
-                    onChange={() => setAudience('members')}
-                  />
-                  Members Only
-                </label>
-                <label className={`m-audience-option ${audience === 'both' ? 'selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="audience"
-                    checked={audience === 'both'}
-                    onChange={() => setAudience('both')}
-                  />
-                  Both (All Staff & Members)
-                </label>
+              <div className="m-audience-section">
+                <label>AUDIENCE SELECTION</label>
+                <div className="m-audience-options">
+                  <label className={`m-audience-option ${audience === 'staff' ? 'selected' : ''}`}>
+                    <input
+                      type="radio"
+                      name="audience"
+                      checked={audience === 'staff'}
+                      onChange={() => setAudience('staff')}
+                    />
+                    Staff Only
+                  </label>
+                  <label className={`m-audience-option ${audience === 'members' ? 'selected' : ''}`}>
+                    <input
+                      type="radio"
+                      name="audience"
+                      checked={audience === 'members'}
+                      onChange={() => setAudience('members')}
+                    />
+                    Members Only
+                  </label>
+                  <label className={`m-audience-option ${audience === 'both' ? 'selected' : ''}`}>
+                    <input
+                      type="radio"
+                      name="audience"
+                      checked={audience === 'both'}
+                      onChange={() => setAudience('both')}
+                    />
+                    Both (All Staff & Members)
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <button className="m-finalize-btn">Finalize Schedule</button>
+              <button type="submit" className="m-finalize-btn">Finalize Schedule</button>
+            </form>
           </div>
 
           {/* Active Agenda */}

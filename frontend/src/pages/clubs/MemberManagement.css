@@ -10,7 +10,7 @@
 /* Sidebar */
 .mm-sidebar {
   width: 260px;
-  background: white;
+  background: rgb(226, 238, 247);
   border-right: 1px solid #e5e7eb;
   padding: 24px 20px;
   display: flex;

@@ -12,6 +12,7 @@ const StaffProfiles = () => {
     phone: '',
     location: '',
   });
+  const [errors, setErrors] = useState({});
 
   const staffMembers = [
     {
@@ -59,28 +60,77 @@ const StaffProfiles = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Only image files are allowed");
+        return;
+      }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
+      reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (name === "phone") {
+      const digits = value.replace(/\D/g, '').slice(0, 10);
+      setFormData({ ...formData, [name]: digits });
+    } else if (name === "age") {
+      const num = value.replace(/\D/g, '');
+      setFormData({ ...formData, [name]: num });
+    } else if (name === "name") {
+      const clean = value.replace(/[^a-zA-Z\s]/g, '');
+      setFormData({ ...formData, [name]: clean });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    // Full Name: must have first and last, only letters
+    if (!formData.name.trim()) {
+      newErrors.name = "Full name is required";
+    } else if (!/^[A-Za-z]+\s[A-Za-z]+$/.test(formData.name.trim())) {
+      newErrors.name = "Enter first and last name (letters only)";
+    }
+
+    // Age
+    if (!formData.age) newErrors.age = "Age is required";
+    else if (+formData.age < 18 || +formData.age > 100) newErrors.age = "Age must be 18-100";
+
+    // Position
+    if (!formData.position) newErrors.position = "Position is required";
+
+    // Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) newErrors.email = "Email is required";
+    else if (!emailRegex.test(formData.email)) newErrors.email = "Enter a valid email";
+
+    // Phone
+    if (!formData.phone) newErrors.phone = "Phone number required";
+    else if (formData.phone.length !== 10) newErrors.phone = "Phone must be 10 digits";
+
+    // Image
+    if (!previewImage) newErrors.image = "Profile photo is required";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("New Staff Added:", { ...formData, avatar: previewImage });
-    alert("Staff member added successfully! (Check console for data)");
-    setShowAddForm(false);
-    setPreviewImage(null);
-    setFormData({ name: '', age: '', position: '', email: '', phone: '', location: '' });
+    if (validateForm()) {
+      console.log("New Staff Added:", { ...formData, avatar: previewImage });
+      alert("Staff member added successfully! (Check console for data)");
+      setShowAddForm(false);
+      setPreviewImage(null);
+      setFormData({ name: '', age: '', position: '', email: '', phone: '', location: '' });
+      setErrors({});
+    }
   };
 
   return (
@@ -114,11 +164,7 @@ const StaffProfiles = () => {
 
           <div className="ss-top-actions">
             <div className="ss-filter-container">
-              <input
-                type="text"
-                placeholder="Filter by position..."
-                className="ss-filter-input"
-              />
+              <input type="text" placeholder="Filter by position..." className="ss-filter-input" />
               <button className="ss-search-icon">🔍</button>
             </div>
             <button className="ss-notification-btn">🛎️</button>
@@ -144,34 +190,11 @@ const StaffProfiles = () => {
                 </span>
 
                 <div className="ss-contact-info">
-                  <div className="ss-contact-row">
-                    <span className="ss-icon">✉️</span>
-                    <span>{staff.email}</span>
-                  </div>
-                  {staff.phone && (
-                    <div className="ss-contact-row">
-                      <span className="ss-icon">📞</span>
-                      <span>{staff.phone}</span>
-                    </div>
-                  )}
-                  {staff.location && (
-                    <div className="ss-contact-row">
-                      <span className="ss-icon">📍</span>
-                      <span>{staff.location}</span>
-                    </div>
-                  )}
-                  {staff.schedule && (
-                    <div className="ss-contact-row">
-                      <span className="ss-icon">🕒</span>
-                      <span>{staff.schedule}</span>
-                    </div>
-                  )}
-                  {staff.responsibility && (
-                    <div className="ss-contact-row">
-                      <span className="ss-icon">📋</span>
-                      <span>{staff.responsibility}</span>
-                    </div>
-                  )}
+                  <div className="ss-contact-row"><span className="ss-icon">✉️</span><span>{staff.email}</span></div>
+                  {staff.phone && <div className="ss-contact-row"><span className="ss-icon">📞</span><span>{staff.phone}</span></div>}
+                  {staff.location && <div className="ss-contact-row"><span className="ss-icon">📍</span><span>{staff.location}</span></div>}
+                  {staff.schedule && <div className="ss-contact-row"><span className="ss-icon">🕒</span><span>{staff.schedule}</span></div>}
+                  {staff.responsibility && <div className="ss-contact-row"><span className="ss-icon">📋</span><span>{staff.responsibility}</span></div>}
                 </div>
               </div>
             </div>
@@ -186,7 +209,7 @@ const StaffProfiles = () => {
         </div>
       </main>
 
-      {/* Add Staff Modal with Image Upload */}
+      {/* Add Staff Modal */}
       {showAddForm && (
         <div className="ss-modal-overlay">
           <div className="ss-modal">
@@ -205,47 +228,28 @@ const StaffProfiles = () => {
                       <p>Click to upload photo</p>
                     </div>
                   )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="ss-file-input"
-                  />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="ss-file-input" />
+                  {errors.image && <span className="ss-error">{errors.image}</span>}
                 </div>
               </div>
 
+              {/* Name */}
               <div className="ss-form-group">
                 <label>Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Enter full name"
-                  required
-                />
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Enter full name" required />
+                {errors.name && <span className="ss-error">{errors.name}</span>}
               </div>
 
+              {/* Age & Position */}
               <div className="ss-form-row">
                 <div className="ss-form-group">
                   <label>Age</label>
-                  <input
-                    type="number"
-                    name="age"
-                    value={formData.age}
-                    onChange={handleInputChange}
-                    placeholder="Age"
-                    required
-                  />
+                  <input type="number" name="age" value={formData.age} onChange={handleInputChange} placeholder="Age" required />
+                  {errors.age && <span className="ss-error">{errors.age}</span>}
                 </div>
                 <div className="ss-form-group">
                   <label>Position</label>
-                  <select
-                    name="position"
-                    value={formData.position}
-                    onChange={handleInputChange}
-                    required
-                  >
+                  <select name="position" value={formData.position} onChange={handleInputChange} required>
                     <option value="">Select Position</option>
                     <option value="Faculty Advisor">Faculty Advisor</option>
                     <option value="President">President</option>
@@ -253,57 +257,33 @@ const StaffProfiles = () => {
                     <option value="Treasurer">Treasurer</option>
                     <option value="Other">Other</option>
                   </select>
+                  {errors.position && <span className="ss-error">{errors.position}</span>}
                 </div>
               </div>
 
+              {/* Email */}
               <div className="ss-form-group">
                 <label>Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="name@university.edu"
-                  required
-                />
+                <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="name@university.edu" required />
+                {errors.email && <span className="ss-error">{errors.email}</span>}
               </div>
 
+              {/* Phone */}
               <div className="ss-form-group">
                 <label>Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="+1 (555) 123-4567"
-                />
+                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="10-digit number" required />
+                {errors.phone && <span className="ss-error">{errors.phone}</span>}
               </div>
 
+              {/* Location */}
               <div className="ss-form-group">
                 <label>Office / Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder="Hall of Letters, Rm 402"
-                />
+                <input type="text" name="location" value={formData.location} onChange={handleInputChange} placeholder="Hall of Letters, Rm 402" />
               </div>
 
               <div className="ss-modal-actions">
-                <button
-                  type="button"
-                  className="ss-cancel-btn"
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setPreviewImage(null);
-                  }}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="ss-submit-btn">
-                  Add Staff Member
-                </button>
+                <button type="button" className="ss-cancel-btn" onClick={() => { setShowAddForm(false); setPreviewImage(null); setErrors({}); }}>Cancel</button>
+                <button type="submit" className="ss-submit-btn">Add Staff Member</button>
               </div>
             </form>
           </div>

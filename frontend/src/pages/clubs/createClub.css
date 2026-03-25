@@ -1,35 +1,129 @@
-.form-page {
-  padding: 120px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+:root {
+  --primary: #4f46e5;
+  --secondary: #6366f1;
+  --white: #ffffff;
+  --gray: #f3f4f6;
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Poppins', sans-serif;
 }
 
-.form-page h2 {
-  font-family: var(--font-display);
-  margin-bottom: 30px;
-}
-
-.form-card {
-  width: 100%;
-  max-width: 500px;
-  background: var(--white);
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-card input,
-.form-card textarea {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+body {
   font-family: var(--font-body);
 }
 
-.form-card textarea {
-  height: 100px;
+/* Background */
+.cc-background {
+  background: linear-gradient(to right, #eef2ff, #f8fafc);
+  min-height: 100vh;
+  padding: 80px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Container Card */
+.cc-container {
+  width: 100%;
+  max-width: 600px;
+  background: var(--white);
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.cc-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--primary);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.cc-subtitle {
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Form Card */
+.cc-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Form Groups */
+.cc-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.cc-form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.cc-form-group input,
+.cc-form-group select,
+.cc-form-group textarea {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.cc-form-group input:focus,
+.cc-form-group select:focus,
+.cc-form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(79,70,229,0.2);
+}
+
+.cc-form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Error Text */
+.cc-error {
+  font-size: 12px;
+  color: #b91c1c;
+  margin-top: 4px;
+}
+
+/* File Name */
+.cc-file-name {
+  font-size: 13px;
+  color: #374151;
+  margin-top: 5px;
+  display: block;
+}
+
+/* File input */
+input[type="file"] {
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+/* Submit Button */
+.cc-btn {
+  padding: 14px 0;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cc-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79,70,229,0.3);
 }

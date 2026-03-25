@@ -19,12 +19,15 @@ const Dashboard = () => {
           <a href="#" className="cm-nav-item cm-active">👥 My Clubs</a>
           <a href="#" className="cm-nav-item">✅ Approvals</a>
           <a href="#" className="cm-nav-item">📅 Meetings</a>
+<br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+
+<Link to="/create-club" className="cm-create-btn">
+  + Create New Club
+</Link>          
         </nav>
 
         <div className="cm-sidebar-bottom">
-          <button className="cm-create-btn">+ Create New Club</button>
-          <a href="#" className="cm-nav-item">⚙️ Settings</a>
-          <a href="#" className="cm-nav-item">❓ Support</a>
+          
         </div>
       </div>
 
