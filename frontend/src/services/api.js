@@ -12,6 +12,12 @@ export const getAllAdvertisements = () => api.get("/manager/advertisements");
 
 export const getActiveAdvertisements = () => api.get("/student/advertisements");
 
+export const getStudentAdvertisementById = (id) => api.get(`/student/advertisements/${id}`);
+
+export const getExpiredAdvertisements = () => api.get("/manager/advertisements/expired");
+
+export const getManagerActiveAdvertisements = () => api.get("/manager/advertisements/active");
+
 export const createAdvertisement = (payload) =>
   api.post("/manager/advertisements", payload);
 

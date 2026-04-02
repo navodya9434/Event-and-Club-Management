@@ -1,7 +1,13 @@
 import { Navigate, NavLink, Outlet, Route, Routes } from "react-router-dom";
-import ManagerDashboard from "./components/ManagerDashboard";
+import ManagerDashboardLayout from "./dashboard/ManagerDashboardLayout";
+import DashboardOverviewPage from "./dashboard/pages/DashboardOverviewPage";
+import AdCrudPage from "./dashboard/pages/AdCrudPage";
+import AllAdsDetailsPage from "./dashboard/pages/AllAdsDetailsPage";
+import ActiveAdsPage from "./dashboard/pages/ActiveAdsPage";
+import ExpiredAdsPage from "./dashboard/pages/ExpiredAdsPage";
 import StudentHome from "./components/StudentHome";
 import HomePage from "./pages/homePage";
+import AdDetailsPage from "./pages/AdDetailsPage";
 import "./styles.css";
 
 function AppLayout() {
@@ -48,11 +54,27 @@ function AppLayout() {
 export default function App() {
   return (
     <Routes>
+      {/* Public homepage — full custom layout, no app shell */}
       <Route path="/" element={<HomePage />} />
+
+      {/* Student view — simple app shell with top navbar */}
       <Route element={<AppLayout />}>
         <Route path="/student" element={<StudentHome />} />
-        <Route path="/manager" element={<ManagerDashboard />} />
       </Route>
+
+      {/* Manager dashboard — dedicated sidebar layout with nested pages */}
+      <Route path="/manager" element={<ManagerDashboardLayout />}>
+        <Route index element={<Navigate to="overview" replace />} />
+        <Route path="overview" element={<DashboardOverviewPage />} />
+        <Route path="crud"     element={<AdCrudPage />} />
+        <Route path="details"  element={<AllAdsDetailsPage />} />
+        <Route path="active"   element={<ActiveAdsPage />} />
+        <Route path="expired"  element={<ExpiredAdsPage />} />
+      </Route>
+
+      {/* Public ad details page — no app shell, own header */}
+      <Route path="/ads/:id" element={<AdDetailsPage />} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

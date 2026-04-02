@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./homePage.css";
 import home2 from "../assets/home2.jpg";
 import home3 from "../assets/home3.jpg";
@@ -484,6 +485,12 @@ const AllAdvertisementsSection = () => {
                   <div className="home-ad-card__body">
                     <h3>{ad.title}</h3>
                     <p>{ad.description}</p>
+                    <Link
+                      to={`/ads/${ad.id}`}
+                      className="home-ad-card__details-btn"
+                    >
+                      View Details &rsaquo;
+                    </Link>
                   </div>
                 </article>
               </div>

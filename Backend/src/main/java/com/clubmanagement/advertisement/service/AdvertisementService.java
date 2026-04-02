@@ -16,5 +16,11 @@ public interface AdvertisementService {
     Advertisement getAdvertisementById(Long id);
 
     List<Advertisement> getStudentVisibleAdvertisements();
+
+    Advertisement getStudentAdvertisementById(Long id);
+
+    List<Advertisement> getExpiredAdvertisements();
+
+    List<Advertisement> getActiveAdvertisements();
 }
 

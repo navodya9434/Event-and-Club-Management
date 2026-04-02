@@ -17,5 +17,11 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             @Param("today") LocalDate today,
             @Param("excludedStatuses") Collection<AdvertisementStatus> excludedStatuses
     );
+
+    @Query("SELECT a FROM Advertisement a WHERE a.status = com.clubmanagement.advertisement.model.AdvertisementStatus.EXPIRED OR a.expiryDate < :today ORDER BY a.expiryDate DESC")
+    List<Advertisement> findExpiredAdvertisements(@Param("today") LocalDate today);
+
+    @Query("SELECT a FROM Advertisement a WHERE a.expiryDate >= :today AND a.status = com.clubmanagement.advertisement.model.AdvertisementStatus.ACTIVE ORDER BY a.expiryDate ASC")
+    List<Advertisement> findActiveAdvertisements(@Param("today") LocalDate today);
 }
 

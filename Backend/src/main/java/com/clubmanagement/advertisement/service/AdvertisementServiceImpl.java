@@ -62,5 +62,28 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public List<Advertisement> getStudentVisibleAdvertisements() {
         return advertisementRepository.findStudentVisibleAdvertisements(LocalDate.now(), STUDENT_EXCLUDED_STATUSES);
     }
+
+    @Override
+    public Advertisement getStudentAdvertisementById(Long id) {
+        Advertisement advertisement = getAdvertisementById(id);
+        LocalDate today = LocalDate.now();
+        if (advertisement.getStatus() == AdvertisementStatus.INAPPROPRIATE
+                || advertisement.getStatus() == AdvertisementStatus.EXPIRED
+                || advertisement.getExpiryDate().isBefore(today)) {
+            throw new ResourceNotFoundException(
+                    "Advertisement not found or no longer available with id: " + id);
+        }
+        return advertisement;
+    }
+
+    @Override
+    public List<Advertisement> getExpiredAdvertisements() {
+        return advertisementRepository.findExpiredAdvertisements(LocalDate.now());
+    }
+
+    @Override
+    public List<Advertisement> getActiveAdvertisements() {
+        return advertisementRepository.findActiveAdvertisements(LocalDate.now());
+    }
 }
 

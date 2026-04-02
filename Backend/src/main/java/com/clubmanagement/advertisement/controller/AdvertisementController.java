@@ -50,6 +50,16 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
 
+    @GetMapping("/manager/advertisements/expired")
+    public ResponseEntity<List<Advertisement>> getExpiredAdvertisements() {
+        return ResponseEntity.ok(advertisementService.getExpiredAdvertisements());
+    }
+
+    @GetMapping("/manager/advertisements/active")
+    public ResponseEntity<List<Advertisement>> getManagerActiveAdvertisements() {
+        return ResponseEntity.ok(advertisementService.getActiveAdvertisements());
+    }
+
     @GetMapping("/manager/advertisements/{id}")
     public ResponseEntity<Advertisement> getAdvertisementById(@PathVariable Long id) {
         return ResponseEntity.ok(advertisementService.getAdvertisementById(id));
@@ -72,6 +82,11 @@ public class AdvertisementController {
     @GetMapping("/student/advertisements")
     public ResponseEntity<List<Advertisement>> getStudentVisibleAdvertisements() {
         return ResponseEntity.ok(advertisementService.getStudentVisibleAdvertisements());
+    }
+
+    @GetMapping("/student/advertisements/{id}")
+    public ResponseEntity<Advertisement> getStudentAdvertisementById(@PathVariable Long id) {
+        return ResponseEntity.ok(advertisementService.getStudentAdvertisementById(id));
     }
 }
 
