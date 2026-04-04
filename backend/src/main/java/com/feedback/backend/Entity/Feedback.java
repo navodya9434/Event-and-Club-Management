@@ -22,4 +22,6 @@ public class Feedback {
      private String message;
      private int rating;
 
+     private String reply;
+
 }

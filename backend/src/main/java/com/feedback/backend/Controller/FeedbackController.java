@@ -1,6 +1,8 @@
 package com.feedback.backend.Controller;
 
 
+import com.feedback.backend.Dto.FeedbackAnalyticsResponse;
+import com.feedback.backend.Dto.ReplyRequest;
 import com.feedback.backend.Entity.Feedback;
 import com.feedback.backend.Service.FeedbackService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +23,29 @@ public class FeedbackController {
           return feedbackService.saveFeedback(feedback);
     }
 
+    @PutMapping("/{id}")
+    public Feedback updateFeedback(@PathVariable Long id, @RequestBody Feedback feedback) {
+        return feedbackService.updateFeedback(id, feedback);
+    }
+
     @GetMapping
     public List<Feedback> getAllFeedbacks() {
         return feedbackService.getAllFeedbacks();
+    }
+
+    @GetMapping("/search")
+    public List<Feedback> searchFeedbacks(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer minRating,
+            @RequestParam(required = false) Integer maxRating,
+            @RequestParam(required = false, defaultValue = "false") Boolean onlyReplied
+    ) {
+        return feedbackService.searchFeedbacks(keyword, minRating, maxRating, onlyReplied);
+    }
+
+    @GetMapping("/analytics")
+    public FeedbackAnalyticsResponse getAnalytics() {
+        return feedbackService.getAnalytics();
     }
 
     @GetMapping("/{id}")
@@ -35,5 +57,11 @@ public class FeedbackController {
     public void deleteFeedback(@PathVariable Long id) {
         feedbackService.deleteFeedback(id);
     }
+
+    @PutMapping("/{id}/reply")
+    public Feedback replyToFeedback(@PathVariable Long id, @RequestBody ReplyRequest request) {
+        return feedbackService.updateReply(id, request.reply());
+    }
+
 
 }
