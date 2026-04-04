@@ -358,3 +358,28 @@
   50% { opacity: 0.3; }
   100% { opacity: 1; }
 }
+
+/* Sidebar */
+.ep-sidebar {
+  width: 240px;
+  background: #0d1b4c;
+  color: white;
+  padding: 25px 20px;
+  
+  /* Make sidebar fixed so it stays visible */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+  z-index: 1000;
+}
+
+/* Main Content */
+.ep-main {
+  flex: 1;
+  padding: 30px 40px;
+  margin-left: 240px; /* Space for fixed sidebar */
+  overflow-y: auto;
+}
