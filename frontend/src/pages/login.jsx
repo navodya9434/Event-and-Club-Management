@@ -24,51 +24,55 @@ function Login() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-900">
-      {/* Background Image with Overlay */}
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-8">
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-slate-950/75"></div>
       </div>
 
-      {/* Login Card */}
-      <div className="relative z-10 w-full max-w-sm px-4">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-6">
-          {/* Logo/Brand */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-3">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-1">Admin Portal</h2>
-            <p className="text-gray-300 text-sm">
-              Sign in to access your dashboard
-            </p>
+      <div className="pointer-events-none absolute -left-20 top-16 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-orange-400/20 blur-3xl" />
+
+      <div className="relative z-10 w-full max-w-5xl overflow-hidden rounded-3xl border border-white/25 bg-white/10 shadow-[0_35px_70px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl md:grid md:grid-cols-2">
+        <div className="hidden bg-linear-to-br from-teal-500/80 to-cyan-600/70 p-8 text-slate-900 md:block">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em]">Admin Platform</p>
+          <h1 className="mt-3 font-display text-4xl font-bold leading-tight">Control every event, ticket, and workflow in one place.</h1>
+          <p className="mt-4 max-w-sm text-sm font-medium text-slate-900/80">
+            Welcome back. Sign in to continue managing operations with real-time visibility and fast tools.
+          </p>
+
+          <div className="mt-10 space-y-3 text-sm font-semibold text-slate-900/85">
+            <p>- Unified dashboard insights</p>
+            <p>- Approval and authorization center</p>
+            <p>- Feedback and user management</p>
           </div>
 
-          {/* Login Form */}
+          <div className="mt-10 h-40 rounded-2xl border border-white/40 bg-white/30 p-4">
+            <p className="text-xs uppercase tracking-[0.2em]">Security Note</p>
+            <p className="mt-2 text-sm font-medium">
+              This portal is restricted to authorized admins. All actions are tracked.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white/10 p-6 md:p-8">
+          <div className="mb-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-teal-200">Sign In</p>
+            <h2 className="mt-2 font-display text-3xl font-bold text-white">Admin Portal</h2>
+            <p className="mt-2 text-sm text-slate-200">Use your admin credentials to access the dashboard.</p>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1.5">
+              <label className="mb-1.5 block text-sm font-medium text-slate-200">
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-slate-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -86,20 +90,20 @@ function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="block w-full pl-10 pr-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="block w-full rounded-xl border border-white/25 bg-white/10 py-2.5 pl-10 pr-3 text-white placeholder-slate-400 transition duration-200 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-300/70"
                   placeholder="admin@example.com"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1.5">
+              <label className="mb-1.5 block text-sm font-medium text-slate-200">
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-slate-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -117,7 +121,7 @@ function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="block w-full pl-10 pr-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="block w-full rounded-xl border border-white/25 bg-white/10 py-2.5 pl-10 pr-3 text-white placeholder-slate-400 transition duration-200 focus:border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-300/70"
                   placeholder="Enter your password"
                 />
               </div>
@@ -126,12 +130,12 @@ function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-linear-to-r from-blue-600 to-purple-600 text-white py-2.5 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 py-2.5 font-semibold text-slate-950 transition duration-200 hover:from-teal-400 hover:to-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="-ml-1 mr-3 h-5 w-5 animate-spin text-slate-950"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -156,6 +160,8 @@ function Login() {
               )}
             </button>
           </form>
+
+          <p className="mt-5 text-center text-xs text-slate-300">Demo credentials: admin@example.com / admin123</p>
         </div>
       </div>
     </div>

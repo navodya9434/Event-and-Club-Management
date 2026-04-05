@@ -9,6 +9,7 @@ import UserManagement from "./pages/UserManagement";
 import Events from "./pages/Events";
 import Tickets from "./pages/Tickets";
 import Authorization from "./pages/Authorization";
+import Feedback from "./pages/Feedback";
 import Settings from "./pages/Settings";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="events" element={<Events />} />
         <Route path="tickets" element={<Tickets />} />
         <Route path="auth" element={<Authorization />} />
+          <Route path="feedback" element={<Feedback />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 
