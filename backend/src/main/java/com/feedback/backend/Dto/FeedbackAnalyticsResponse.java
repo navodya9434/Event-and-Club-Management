@@ -1,4 +1,4 @@
-package com.feedback.backend.Dto;
+package com.feedback.backend.dto;
 
 import java.util.Map;
 

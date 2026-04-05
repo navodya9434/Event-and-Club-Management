@@ -1,8 +1,8 @@
 package com.feedback.backend.Controller;
 
 
-import com.feedback.backend.Dto.FeedbackAnalyticsResponse;
-import com.feedback.backend.Dto.ReplyRequest;
+import com.feedback.backend.dto.FeedbackAnalyticsResponse;
+import com.feedback.backend.dto.ReplyRequest;
 import com.feedback.backend.Entity.Feedback;
 import com.feedback.backend.Service.FeedbackService;
 import lombok.RequiredArgsConstructor;
