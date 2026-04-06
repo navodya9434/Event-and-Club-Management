@@ -24,6 +24,7 @@ export default function EventProfile() {
   const [ticketErrors, setTicketErrors] = useState([]);
   const [countdown, setCountdown] = useState("");
   const [minDate, setMinDate] = useState("");
+  const [toasts, setToasts] = useState([]);
 
   // Countdown calculation
   useEffect(() => {
@@ -55,6 +56,15 @@ export default function EventProfile() {
     const dd = String(today.getDate()).padStart(2, "0");
     setMinDate(`${yyyy}-${mm}-${dd}`);
   }, []);
+
+  // Toast helper
+  const showToast = (message) => {
+    const id = Date.now();
+    setToasts([...toasts, { id, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  };
 
   const addTicket = () => {
     setTickets([...tickets, { name: "", price: "", seats: "", date: "" }]);
@@ -139,15 +149,33 @@ export default function EventProfile() {
     return Object.keys(newErrors).length === 0 && updatedTicketErrors.every(te => Object.keys(te).length === 0);
   };
 
-  const launchEvent = () => {
+  const updateEventDetails = () => {
     if (validateForm()) {
-      alert(`Event "${eventData.name}" has been launched! 🚀`);
-      // TODO: API call to mark event as live
+      showToast("Updated to Event Details");
+    }
+  };
+
+  const submitPromotion = () => {
+    showToast("Submitted to Request Promotion");
+  };
+
+  const launchTicketCenter = () => {
+    if (validateForm()) {
+      showToast("Launched to Ticket Launch Center");
+      setTickets([{ name: "", price: "", seats: "", date: "" }]);
+      setTicketErrors([{}]);
     }
   };
 
   return (
     <div className="ep-dashboard">
+      {/* Toasts */}
+      <div className="ep-toast-container">
+        {toasts.map((t) => (
+          <div key={t.id} className="ep-toast">{t.message}</div>
+        ))}
+      </div>
+
       {/* Sidebar */}
       <aside className="ep-sidebar sticky-sidebar">
         <h2 className="ep-logo">Event Manager</h2>
@@ -246,7 +274,7 @@ export default function EventProfile() {
               </label>
             </div>
 
-            <button className="ep-btn-primary" onClick={launchEvent}>
+            <button className="ep-btn-primary" onClick={updateEventDetails}>
               Update Event
             </button>
           </div>
@@ -268,7 +296,9 @@ export default function EventProfile() {
             </select>
             <input className="ep-input" placeholder="Target Audience" />
             <input className="ep-range" type="range" min="500" max="10000" />
-            <button className="ep-btn-primary">Submit Request</button>
+            <button className="ep-btn-primary" onClick={submitPromotion}>
+              Submit Request
+            </button>
           </div>
         </div>
 
@@ -333,7 +363,7 @@ export default function EventProfile() {
             + Add Ticket Category
           </button>
 
-          <button className="ep-btn-primary" onClick={launchEvent}>Live Launch</button>
+          <button className="ep-btn-primary" onClick={launchTicketCenter}>Live Launch</button>
         </div>
       </div>
     </div>
