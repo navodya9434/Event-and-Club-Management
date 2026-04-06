@@ -1,90 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./allEvents.css";
 import { Navbar, Footer, AdTickerBar } from "../../components/HomeComponents";
 
-import HomeImg from "../../assets/home3.jpg";
-import TechXpoImg from "../../assets/home2.jpg";
-import LeadershipImg from "../../assets/home4.jpg";
-
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "Spring Fest 2025",
-    date: "April 18, 2025",
-    time: "6:00 PM",
-    venue: "Main Auditorium",
-    artists: "DJ Alex, Live Band",
-    dress: "Casual / Festive",
-    desc: "A vibrant cultural festival with music, dance, and food.",
-    img: HomeImg
-  },
-  {
-    id: 2,
-    title: "TechXpo Hackathon",
-    date: "April 25, 2025",
-    time: "9:00 AM",
-    venue: "CS Building",
-    artists: "Industry Mentors",
-    dress: "Smart Casual",
-    desc: "24-hour coding challenge with exciting prizes.",
-    img: TechXpoImg
-  },
-  {
-    id: 3,
-    title: "Leadership Summit",
-    date: "May 2, 2025",
-    time: "10:00 AM",
-    venue: "Hall B",
-    artists: "Guest Speakers",
-    dress: "Formal",
-    desc: "Enhance leadership and communication skills.",
-    img: LeadershipImg
-  }
-];
-
-const pastEvents = [
-  {
-    id: 4,
-    title: "Winter Gala",
-    date: "Jan 10, 2025",
-    images: [HomeImg, TechXpoImg]
-  },
-  {
-    id: 5,
-    title: "Coding Bootcamp",
-    date: "Feb 15, 2025",
-    images: [LeadershipImg, TechXpoImg]
-  }
-];
+const placeholderImg = "https://via.placeholder.com/300x200?text=Event+Image";
 
 export default function EventsPage() {
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
   const [activeEventId, setActiveEventId] = useState(null);
-  const [lightbox, setLightbox] = useState({ open: false, images: [], index: 0 });
+
+  const token = JSON.parse(localStorage.getItem("user"))?.token;
 
   const handleCardClick = (id) => {
     setActiveEventId(prev => (prev === id ? null : id));
   };
 
-  const openLightbox = (images, idx) => {
-    setLightbox({ open: true, images, index: idx });
-  };
+  // Fetch events
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        if (!token) return;
 
-  const closeLightbox = () => setLightbox({ open: false, images: [], index: 0 });
+        const res = await fetch("http://localhost:8080/api/events", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-  const prevImage = (e) => {
-    e.stopPropagation();
-    setLightbox(prev => ({
-      ...prev,
-      index: (prev.index - 1 + prev.images.length) % prev.images.length
-    }));
-  };
+        if (!res.ok) {
+          console.error("Failed to fetch events");
+          return;
+        }
 
-  const nextImage = (e) => {
-    e.stopPropagation();
-    setLightbox(prev => ({
-      ...prev,
-      index: (prev.index + 1) % prev.images.length
-    }));
+        const data = await res.json();
+        const now = new Date();
+
+        // Only APPROVED events
+        const approvedEvents = data.filter(e => e.status === "APPROVED");
+
+        // Upcoming events
+        const upcoming = approvedEvents.filter(e => {
+          const eventDT = new Date(`${e.date}T${e.time}`);
+          return eventDT > now;
+        });
+
+        // Past events
+        const past = approvedEvents.filter(e => {
+          const eventDT = new Date(`${e.date}T${e.time}`);
+          return eventDT <= now;
+        });
+
+        setUpcomingEvents(upcoming);
+        setPastEvents(past);
+
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      }
+    };
+
+    fetchEvents();
+  }, [token]);
+
+  // Corrected image URL function (like Dashboard)
+  const getImageUrl = (path) => {
+    if (!path) return placeholderImg;
+    // Replace backslashes and encode filename
+    const normalizedPath = path.replace(/\\/g, "/");
+    const parts = normalizedPath.split("/");
+    const filename = encodeURIComponent(parts.pop());
+    return `http://localhost:8080/${[...parts, filename].join("/")}`;
   };
 
   return (
@@ -98,75 +80,50 @@ export default function EventsPage() {
         {/* Upcoming Events */}
         <h2 className="section-heading">Upcoming Events</h2>
         <div className="events-grid">
+          {upcomingEvents.length === 0 && <p>No upcoming events.</p>}
           {upcomingEvents.map(event => {
-            const isActive = activeEventId === event.id;
+            const isActive = activeEventId === event.event_id;
             return (
-              <div key={event.id} className={`event-card ${isActive ? "active" : ""}`}>
-                <div className="event-card-header" onClick={() => handleCardClick(event.id)}>
-                  <img src={event.img} alt={event.title} className="event-card-img" />
+              <div key={event.event_id} className={`event-card ${isActive ? "active" : ""}`}>
+                <div className="event-card-header" onClick={() => handleCardClick(event.event_id)}>
+                  <img
+                    src={event.imagePath ? `http://localhost:8080/${event.imagePath.replace(/\\/g, "/")}` : placeholderImg}
+                    alt={event.title}
+                    className="event-card-img"
+                  />
                   <h3>{event.title}</h3>
                   <p>{event.date} • {event.time}</p>
-                </div>
-                <div className="event-details">
-                  <p><strong>Venue:</strong> {event.venue}</p>
-                  <p><strong>Artists:</strong> {event.artists}</p>
-                  <p><strong>Dress Code:</strong> {event.dress}</p>
-                  <p>{event.desc}</p>
-                  <button className="btn-book">Book Ticket</button>
+                  <p><strong>Category:</strong> {event.category}</p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Past Events */}
+        {/* Recent Past Events */}
         <h2 className="section-heading">Recent Past Events</h2>
         <div className="events-grid past">
+          {pastEvents.length === 0 && <p>No past events.</p>}
           {pastEvents.map(event => {
-            const isActive = activeEventId === event.id;
-            const firstImage = event.images[0];
+            const isActive = activeEventId === event.event_id;
             return (
               <div
-                key={event.id}
+                key={event.event_id}
                 className={`event-card past-card ${isActive ? "active" : ""}`}
-                onClick={() => handleCardClick(event.id)}
+                onClick={() => handleCardClick(event.event_id)}
               >
-                <img src={firstImage} alt={event.title} className="event-card-img" />
+                <img
+                  src={event.imagePath ? `http://localhost:8080/${event.imagePath.replace(/\\/g, "/")}` : placeholderImg}
+                  alt={event.title}
+                  className="event-card-img"
+                />
                 <h3>{event.title}</h3>
                 <p>{event.date}</p>
-
-                {isActive && (
-                  <div className="event-details">
-                    <p><strong>Gallery:</strong></p>
-                    <div className="gallery">
-                      {event.images.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={img}
-                          alt={`${event.title} ${idx + 1}`}
-                          className="gallery-img"
-                          onClick={e => {
-                            e.stopPropagation();
-                            openLightbox(event.images, idx);
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <p><strong>Category:</strong> {event.category}</p>
               </div>
             );
           })}
         </div>
-
-        {/* Lightbox Modal */}
-        {lightbox.open && (
-          <div className="lightbox" onClick={closeLightbox}>
-            <span className="arrow left" onClick={prevImage}>&#10094;</span>
-            <img src={lightbox.images[lightbox.index]} alt="Preview" className="lightbox-img" />
-            <span className="arrow right" onClick={nextImage}>&#10095;</span>
-          </div>
-        )}
       </main>
 
       <Footer />

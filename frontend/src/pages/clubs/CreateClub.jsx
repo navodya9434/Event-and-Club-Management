@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./createClub.css";
 
-export default function CreateClub() {
+export default function CreateClub({ onClose }) {
   const [club, setClub] = useState({
     name: "",
     category: "",
@@ -11,9 +11,12 @@ export default function CreateClub() {
     email: "",
     contact: "",
     permissionLetter: null,
+    image: null, // ✅ NEW
   });
 
   const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validate = () => {
     let newErrors = {};
@@ -55,12 +58,21 @@ export default function CreateClub() {
     else if (club.permissionLetter.type !== "application/pdf")
       newErrors.permissionLetter = "Only PDF files allowed";
 
+    // ✅ IMAGE VALIDATION
+    if (!club.image) newErrors.image = "Club image is required";
+    else if (!club.image.type.startsWith("image/"))
+      newErrors.image = "Only image files allowed";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
-    setClub({ ...club, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === "name") {
+      value = value.replace(/[^A-Za-z\s]/g, "");
+    }
+    setClub({ ...club, [e.target.name]: value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
@@ -83,11 +95,59 @@ export default function CreateClub() {
     setErrors({ ...errors, permissionLetter: "" });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      console.log("Club Created:", club);
-      alert("Club profile created successfully!");
+  // ✅ IMAGE HANDLER
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setClub({ ...club, image: file });
+    setErrors({ ...errors, image: "" });
+  };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  setIsSubmitting(true);
+
+  const formData = new FormData();
+  formData.append("name", club.name);
+  formData.append("category", club.category);
+  formData.append("description", club.description);
+  formData.append("president", club.president);
+  formData.append("presidentId", club.presidentId);
+  formData.append("email", club.email);
+  formData.append("contact", club.contact);
+  formData.append("organizerId", JSON.parse(localStorage.getItem("user"))?.id);
+
+  if (club.permissionLetter) formData.append("permissionLetter", club.permissionLetter);
+  if (club.image) formData.append("image", club.image);
+
+  try {
+    const token = JSON.parse(localStorage.getItem("user"))?.token;
+
+    if (!token) {
+      alert("You must be logged in to create a club!");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const response = await fetch("http://localhost:8080/api/clubs", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      // Success
+      setToast(true);
+      setTimeout(() => {
+        setToast(false);
+        if (onClose) onClose();
+      }, 2500);
+
+      // Reset form
       setClub({
         name: "",
         category: "",
@@ -97,21 +157,51 @@ export default function CreateClub() {
         email: "",
         contact: "",
         permissionLetter: null,
+        image: null,
       });
       setErrors({});
       document.getElementById("permissionLetter").value = "";
+      document.getElementById("clubImage").value = "";
+
+    } else if (response.status === 401) {
+      alert("Unauthorized! Please login again.");
+    } else if (response.status === 403) {
+      alert("Forbidden! You don't have permission to create a club.");
+    } else {
+      // Safely parse JSON if available
+      let errorMessage = "Failed to create club. Please try again.";
+      try {
+        const text = await response.text();
+        if (text) {
+          const errorData = JSON.parse(text);
+          errorMessage = errorData.message || errorMessage;
+        }
+      } catch (err) {
+        console.log("Error parsing JSON:", err);
+      }
+      alert(errorMessage);
     }
-  };
+
+  } catch (error) {
+    console.error("Network error:", error);
+    alert("Network error. Make sure backend is running and accessible.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="cc-page">
+      {toast && <div className="cc-toast">Club submitted successfully!</div>}
+
       <div className="cc-background">
         <div className="cc-container">
           <h2 className="cc-title">Create Club Profile</h2>
-          <p className="cc-subtitle">Register a new academic club and expand your community.</p>
+          <p className="cc-subtitle">
+            Register a new academic club and expand your community.
+          </p>
 
           <form onSubmit={handleSubmit} className="cc-form-card">
-
             <div className="cc-form-group">
               <label>Club Name</label>
               <input
@@ -201,11 +291,37 @@ export default function CreateClub() {
                 accept="application/pdf"
                 onChange={handleFileChange}
               />
-              {club.permissionLetter && <span className="cc-file-name">{club.permissionLetter.name}</span>}
+              {club.permissionLetter && (
+                <span className="cc-file-name">{club.permissionLetter.name}</span>
+              )}
               {errors.permissionLetter && <span className="cc-error">{errors.permissionLetter}</span>}
             </div>
 
-            <button className="cc-btn">Create Club</button>
+            {/* ✅ IMAGE UPLOAD */}
+            <div className="cc-form-group">
+              <label>Club Image</label>
+              <input
+                type="file"
+                id="clubImage"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {club.image && <span className="cc-file-name">{club.image.name}</span>}
+              {errors.image && <span className="cc-error">{errors.image}</span>}
+
+              {/* ✅ IMAGE PREVIEW */}
+              {club.image && (
+                <img
+                  src={URL.createObjectURL(club.image)}
+                  alt="preview"
+                  style={{ width: "100px", marginTop: "10px" }}
+                />
+              )}
+            </div>
+
+            <button type="submit" className="cc-btn" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Create Club"}
+            </button>
           </form>
         </div>
       </div>

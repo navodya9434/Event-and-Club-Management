@@ -1,7 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './MemberManagement.css';
+import { useParams } from 'react-router-dom';
 
 const MemberManagement = () => {
+  const { clubId } = useParams(); // ✅ Call at top-level of component
+  const [members, setMembers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [facultyFilter, setFacultyFilter] = useState(""); 
+  const [allFaculties, setAllFaculties] = useState([]); // for dropdown options
+
+  // Fetch members from backend API
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const token = localStorage.getItem("token"); // JWT token
+        if (!token) {
+          console.error("No JWT token found. Please login.");
+          return;
+        }
+
+        const res = await axios.get(
+          `http://localhost:8080/api/clubs/members?clubId=${clubId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setMembers(res.data); // expects array of ClubMember objects with clubName
+
+        // Extract unique faculties for filter dropdown
+        const faculties = [...new Set(res.data.map(m => m.faculty).filter(f => f))];
+        setAllFaculties(faculties);
+
+      } catch (err) {
+        console.error("Error fetching members:", err);
+
+        if (err.response && err.response.status === 403) {
+          alert("You are not allowed to view this club's members.");
+        } else {
+          alert("Failed to load members. Check console for details.");
+        }
+      }
+    };
+
+    if (clubId) fetchMembers(); // ✅ only fetch if clubId exists
+  }, [clubId]); // ✅ depend on clubId
+
+  // Filter members based on search query AND faculty filter
+  const filteredMembers = members.filter((m) => {
+    const fullText = `${m.firstName} ${m.lastName} ${m.faculty} ${m.email} ${m.mobileNumber} ${m.dob} ${m.joinedAt} ${m.clubName || ""}`.toLowerCase();
+    const matchesSearch = fullText.includes(searchQuery.toLowerCase());
+    const matchesFaculty = facultyFilter === "" || (m.faculty || "").toLowerCase().includes(facultyFilter.toLowerCase());
+    return matchesSearch && matchesFaculty;
+  });
+
+  // Handle delete with confirmation
+  const handleDelete = async (memberId) => {
+    if (!window.confirm("Are you sure you want to remove this member?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:8080/api/club_members/${memberId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMembers((prev) => prev.filter((m) => m.memberId !== memberId));
+    } catch (err) {
+      console.error("Error deleting member:", err);
+      alert("Failed to delete member. Check console for details.");
+    }
+  };
+
   return (
     <div className="member-management-page">
       {/* Sidebar */}
@@ -50,11 +117,23 @@ const MemberManagement = () => {
           <div className="mm-search-container">
             <input
               type="text"
-              placeholder="Global search..."
+              placeholder="Search members by any detail..."
               className="mm-global-search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
+            {/* Faculty Filter Dropdown */}
+            <select
+              value={facultyFilter}
+              onChange={(e) => setFacultyFilter(e.target.value)}
+              className="mm-faculty-filter"
+            >
+              <option value="">All Faculties</option>
+              {allFaculties.map((f) => (
+                <option key={f} value={f}>{f}</option>
+              ))}
+            </select>
           </div>
-          
         </header>
 
         {/* Page Header */}
@@ -71,7 +150,7 @@ const MemberManagement = () => {
           </div>
 
           <div className="mm-join-requests-grid">
-            {/* Request 1 */}
+            {/* Mock Join Requests */}
             <div className="mm-request-card">
               <div className="mm-request-avatar">AJ</div>
               <div className="mm-request-info">
@@ -83,8 +162,6 @@ const MemberManagement = () => {
                 <button className="mm-deny-btn">Deny</button>
               </div>
             </div>
-
-            {/* Request 2 */}
             <div className="mm-request-card">
               <div className="mm-request-avatar">MW</div>
               <div className="mm-request-info">
@@ -96,8 +173,6 @@ const MemberManagement = () => {
                 <button className="mm-deny-btn">Deny</button>
               </div>
             </div>
-
-            {/* Request 3 */}
             <div className="mm-request-card">
               <div className="mm-request-avatar">EL</div>
               <div className="mm-request-info">
@@ -118,85 +193,53 @@ const MemberManagement = () => {
             <div className="mm-section-title">
               <span>👥</span> Member Directory
             </div>
-            <div className="mm-search-box">
-              <input
-                type="text"
-                placeholder="Search by name, ID, or faculty"
-                className="mm-directory-search"
-              />
-            </div>
           </div>
 
           <div className="mm-members-grid">
-            {/* Member Cards */}
-            <div className="mm-member-card">
-              <img src="https://i.pravatar.cc/80?u=sarah" alt="Sarah Lee" className="mm-member-photo" />
-              <div className="mm-member-info">
-                <div className="mm-name">Sarah Lee <span className="mm-delete-icon">🗑️</span></div>
-                <div className="mm-faculty">ARTS & SCIENCES</div>
-                <div className="mm-email">s.lee@university.edu</div>
-                <div className="mm-id">2024-0012</div>
-                <div className="mm-gender">Female</div>
-              </div>
-            </div>
+            {filteredMembers.map((member) => (
+              <div className="mm-member-card" key={member.memberId}>
+                {/* Member Photo */}
+                <div className="mm-member-photo-container">
+                  {member.photo ? (
+                    <img
+                      src={`http://localhost:8080/${member.photo}`}
+                      alt={`${member.firstName} ${member.lastName}`}
+                      className="mm-member-photo"
+                    />
+                  ) : (
+                    <div className="mm-member-photo-placeholder">👤</div>
+                  )}
+                </div>
 
-            <div className="mm-member-card">
-              <img src="https://i.pravatar.cc/80?u=david" alt="David Chen" className="mm-member-photo" />
-              <div className="mm-member-info">
-                <div className="mm-name">David Chen <span className="mm-delete-icon">🗑️</span></div>
-                <div className="mm-faculty">ENGINEERING</div>
-                <div className="mm-email">d.chen@university.edu</div>
-                <div className="mm-id">2024-0542</div>
-                <div className="mm-gender">Male</div>
+                {/* Member Info */}
+                <div className="mm-member-info">
+                  <div className="mm-name">
+                    {member.firstName} {member.lastName}
+                  </div>
+                  <div className="mm-faculty">Faculty: {member.faculty || "-"}</div>
+                  <div className="mm-club">Club: {member.clubName || "-"}</div>
+                  <div className="mm-email">Email: {member.email}</div>
+                  <div className="mm-mobile">Mobile: {member.mobileNumber || "-"}</div>
+                  <div className="mm-joined">
+                    Joined: {new Date(member.joinedAt).toLocaleDateString()}
+                  </div>
+                  <div className="mm-dob">
+                    DOB: {member.dob ? new Date(member.dob).toLocaleDateString() : "-"}
+                  </div>
+                  
+                </div>
               </div>
-            </div>
-
-            <div className="mm-member-card">
-              <img src="https://i.pravatar.cc/80?u=maya" alt="Maya Patel" className="mm-member-photo" />
-              <div className="mm-member-info">
-                <div className="mm-name">Maya Patel <span className="mm-delete-icon">🗑️</span></div>
-                <div className="mm-faculty">BUSINESS SCHOOL</div>
-                <div className="mm-email">m.patel@university.edu</div>
-                <div className="mm-id">2023-0912</div>
-                <div className="mm-gender">Female</div>
-              </div>
-            </div>
-
-            <div className="mm-member-card">
-              <img src="https://i.pravatar.cc/80?u=jordan" alt="Jordan Smith" className="mm-member-photo" />
-              <div className="mm-member-info">
-                <div className="mm-name">Jordan Smith <span className="mm-delete-icon">🗑️</span></div>
-                <div className="mm-faculty">SOCIAL SCIENCES</div>
-                <div className="mm-email">j.smith@university.edu</div>
-                <div className="mm-id">2024-1108</div>
-                <div className="mm-gender">Non-binary</div>
-              </div>
-            </div>
-
-            <div className="mm-member-card">
-              <img src="https://i.pravatar.cc/80?u=liam" alt="Liam O'Brian" className="mm-member-photo" />
-              <div className="mm-member-info">
-                <div className="mm-name">Liam O'Brian <span className="mm-delete-icon">🗑️</span></div>
-                <div className="mm-faculty">HISTORY</div>
-                <div className="mm-email">l.obrian@university.edu</div>
-                <div className="mm-id">2023-0045</div>
-                <div className="mm-gender">Male</div>
-              </div>
-            </div>
-
-            <div className="mm-member-card">
-              <img src="https://i.pravatar.cc/80?u=sofia" alt="Sofia Rossi" className="mm-member-photo" />
-              <div className="mm-member-info">
-                <div className="mm-name">Sofia Rossi <span className="mm-delete-icon">🗑️</span></div>
-                <div className="mm-faculty">LITERATURE</div>
-                <div className="mm-email">s.rossi@university.edu</div>
-                <div className="mm-id">2024-0881</div>
-                <div className="mm-gender">Female</div>
-              </div>
-            </div>
+            ))}
           </div>
 
-          <button className="mm-load-more-btn">LOAD MORE ENTRIES</button>
+          {filteredMembers.length < members.length && (
+            <button
+              className="mm-load-more-btn"
+              onClick={() => setMembers(members)}
+            >
+              LOAD MORE ENTRIES
+            </button>
+          )}
         </div>
       </main>
     </div>
