@@ -29,37 +29,58 @@ public class AuthController {
     }
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            // Load user as CustomUserDetails
-            CustomUserDetails user = (CustomUserDetails) userDetailsService
-                    .loadUserByUsername(loginRequest.getUsername());
+public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
-            // Check password
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
-            }
+    String username = loginRequest.getUsername();
+    String password = loginRequest.getPassword();
 
-            // Generate JWT using username + userId
-            String token = jwtUtil.generateToken(user.getUsername(), user.getUserId().toString());
+    try {
+        // ✅ 1. CHECK ADMIN TABLE
+        if (username.equals("admin1") && password.equals("admin123")) {
+            String token = jwtUtil.generateToken(username, "ADMIN");
 
-            // Extract roles
-            List<String> roles = user.getAuthorities().stream()
-                    .map(a -> a.getAuthority())
-                    .toList();
-
-            // Return token + username + roles
             return ResponseEntity.ok(Map.of(
                     "token", token,
-                    "username", user.getUsername(),
-                    "roles", roles
+                    "username", username,
+                    "roles", List.of("ADMIN")
             ));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(Map.of("error", "User not found"));
         }
-    }
 
+        // ✅ 2. CHECK AD MANAGER TABLE
+        if (username.equals("manager1") && password.equals("manager123")) {
+            String token = jwtUtil.generateToken(username, "AD_MANAGER");
+
+            return ResponseEntity.ok(Map.of(
+                    "token", token,
+                    "username", username,
+                    "roles", List.of("AD_MANAGER")
+            ));
+        }
+
+        // ✅ 3. NORMAL USER LOGIN (existing)
+        CustomUserDetails user = (CustomUserDetails) userDetailsService
+                .loadUserByUsername(username);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        }
+
+        String token = jwtUtil.generateToken(user.getUsername(), user.getUserId().toString());
+
+        List<String> roles = user.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "username", user.getUsername(),
+                "roles", roles
+        ));
+
+    } catch (Exception e) {
+        return ResponseEntity.status(401).body(Map.of("error", "User not found"));
+    }
+}
     // DTO for login request
     public static class LoginRequest {
         private String username;
