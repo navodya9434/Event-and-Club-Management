@@ -32,50 +32,62 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setServerError("");
+  e.preventDefault();
+  setServerError("");
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    if (isLogin) {
-      try {
-        const res = await fetch("http://localhost:8080/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: formData.username,
-            password: formData.password,
-          }),
-        });
+  if (isLogin) {
+    try {
+      const res = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
 
-        const text = await res.text();
-        const data = text ? JSON.parse(text) : {};
+      const text = await res.text();
+      const data = text ? JSON.parse(text) : {};
 
-        if (res.ok) {
-          // Store token in localStorage
-          if (data.token) localStorage.setItem("token", data.token);
+      if (res.ok) {
+        // ✅ Store token
+        if (data.token) localStorage.setItem("token", data.token);
 
-          // Store roles array
-          if (data.roles) localStorage.setItem("roles", JSON.stringify(data.roles));
+        // ✅ Store roles safely
+        const roles = data.roles || [];
+        localStorage.setItem("roles", JSON.stringify(roles));
 
-          // Store user info
-          localStorage.setItem("user", JSON.stringify(data));
-          localStorage.setItem("userName", data.name || "Student");
+        // ✅ Store user info
+        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("userName", data.username || "Student");
 
-          // Navigate to Student Dashboard
+        // ✅ ROLE-BASED REDIRECT (safe)
+        if (roles.includes("ADMIN")) {
+          navigate("/admin-dashboard");
+        } 
+        else if (roles.includes("AD_MANAGER")) {
+          navigate("/ad-manager-dashboard");
+        } 
+        else {
+          // 🔹 default → ALL other users (students, organizers, etc.)
           navigate("/student-dashboard");
-        } else {
-          setServerError(data.message || "Invalid credentials");
         }
-      } catch (err) {
-        console.error(err);
-        setServerError("Server error, try again later");
-      }
-    } else {
-      alert(`Registration attempted for ${formData.name}`);
-    }
-  };
 
+      } else {
+        setServerError(data.message || data.error || "Invalid credentials");
+      }
+
+    } catch (err) {
+      console.error(err);
+      setServerError("Server error, try again later");
+    }
+
+  } else {
+    alert(`Registration attempted for ${formData.name}`);
+  }
+};
   const inputClass = (hasError) =>
     `w-full rounded-xl border bg-white/90 pl-11 pr-4 py-3 text-sm text-slate-800 shadow-sm transition focus:outline-none focus:ring-2 ${
       hasError
