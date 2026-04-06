@@ -1,8 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./ClubProfile.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 
 const ClubProfile = () => {
+  const { clubId } = useParams(); // expects route like /club/:clubId
+  const [clubData, setClubData] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [facultyDistribution, setFacultyDistribution] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("ALL FACULTIES");
+
+  // Map of faculty colors
+  const facultyColors = [
+    "#FF6384",
+    "#36A2EB",
+    "#FFCE56",
+    "#4BC0C0",
+    "#9966FF",
+    "#FF9F40",
+  ];
+
+  useEffect(() => {
+    const fetchClubData = async () => {
+      try {
+        const token = localStorage.getItem("token"); // ✅ JWT token
+        if (!token) {
+          console.error("No JWT token found. Please login.");
+          return;
+        }
+
+        const res = await axios.get(`http://localhost:8080/api/clubs/${clubId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ pass token
+          },
+        });
+
+        const data = res.data;
+        setClubData(data.club);
+        setMembers(data.members || []);
+        setFacultyDistribution(data.facultyDistribution || {});
+      } catch (err) {
+        console.error("Error fetching club data:", err);
+      }
+    };
+
+    fetchClubData();
+  }, [clubId]);
+
+  // Convert facultyDistribution object to array and assign colors
+  const facultyArray = Object.entries(facultyDistribution).map(([faculty, count], idx) => ({
+    faculty,
+    count,
+    color: facultyColors[idx % facultyColors.length],
+  }));
+
+  // Filter and search members
+  const filteredMembers = members
+  .filter((m) => {
+    const fullName = (m.name || `${m.firstName || ""} ${m.lastName || ""}`).trim().toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
+  })
+  .filter((m) =>
+    selectedFaculty === "ALL FACULTIES" ? true : m.faculty === selectedFaculty
+  )
+  .slice(-4); // latest 4 members
+
   return (
     <div className="club-profile-container">
       {/* Left Sidebar */}
@@ -11,12 +74,14 @@ const ClubProfile = () => {
           <h2>Club Manager</h2>
         </div>
         <nav className="club-nav">
-          <a href="#" className="nav-link active">📊 Dashboard</a>
-        <Link to="/member-management" className="nav-link">👥 Members</Link>
-           <Link to="/staff" className="nav-link">👔 Staff</Link>
-          <Link to="/meetings" className="nav-link">📅 Meetings</Link>
-          
-        </nav>
+  <a href="#" className="nav-link active">📊 Dashboard</a>
+{clubData && (
+  <Link to={`/member-management/${clubData.id}`} className="nav-link">
+    👥 Members
+  </Link>
+)}<Link to={`/staff/${clubData?.id}`} className="nav-link">👔 Staff</Link>
+<Link to={`/meetings/${clubData?.id}`} className="nav-link">📅 Meetings</Link>
+</nav>
         <button className="create-new-button">+ Create New Entry</button>
       </aside>
 
@@ -25,55 +90,63 @@ const ClubProfile = () => {
         {/* Club Header */}
         <div className="club-main-header">
           <div className="club-info">
-            <h1 className="club-name">Modern Literature Society</h1>
-            <p className="club-subtitle">Founded 1924 • Faculty of Arts & Humanities</p>
+            <h1 className="club-name">{clubData?.name || "Club Name"}</h1>
+            <p className="club-subtitle">
+              Founded {clubData?.foundedYear || "N/A"} • {clubData?.faculty || "Faculty"}
+            </p>
           </div>
           <button className="edit-profile-button">✏️ Edit Profile</button>
         </div>
 
-        {/* Top Cards Grid - Now more attractive */}
+        {/* Top Cards Grid */}
         <div className="content-grid">
-          {/* Member Growth - Enhanced Card */}
+          {/* Member Growth */}
           <div className="stat-card member-growth-card">
             <h3 className="card-title">MEMBER GROWTH</h3>
             <div className="growth-number">
-              1,248 <span className="growth-rate">+12%</span>
+              {members.length} <span className="growth-rate">+12%</span>
             </div>
             <div className="progress-container">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: "83%" }}></div>
+                <div
+                  className="progress-fill"
+                  style={{
+                    width: `${Math.min((members.length / 1500) * 100, 100)}%`,
+                  }}
+                ></div>
               </div>
             </div>
             <div className="goal-text">GOAL: 1500</div>
           </div>
 
-          {/* Faculty Distribution - Enhanced Card */}
+          {/* Faculty Distribution */}
           <div className="stat-card faculty-distribution-card">
             <div className="card-header">
               <h3 className="card-title">FACULTY DISTRIBUTION</h3>
-              <div className="pie-placeholder">◔</div>
+              <div className="pie-placeholder">
+                {/* Simulated pie chart */}
+                {facultyArray.map((f) => (
+  <span
+    key={f.faculty}   // ✅ ADD THIS
+    className="pie-segment"
+    style={{ backgroundColor: f.color }}
+  />
+))}
+              </div>
             </div>
             <div className="distribution-list">
-              <div className="dist-item">
-                <span className="dot arts"></span>
-                <span className="faculty-name">Arts & Hum.</span>
-                <span className="percentage">45%</span>
-              </div>
-              <div className="dist-item">
-                <span className="dot engineering"></span>
-                <span className="faculty-name">Engineering</span>
-                <span className="percentage">22%</span>
-              </div>
-              <div className="dist-item">
-                <span className="dot business"></span>
-                <span className="faculty-name">Business</span>
-                <span className="percentage">18%</span>
-              </div>
-              <div className="dist-item">
-                <span className="dot science"></span>
-                <span className="faculty-name">Science</span>
-                <span className="percentage">15%</span>
-              </div>
+              {facultyArray.map((f) => (
+                <div className="dist-item" key={f.faculty}>
+                  <span
+                    className="dot"
+                    style={{ backgroundColor: f.color }}
+                  ></span>
+                  <span className="faculty-name">{f.faculty}</span>
+                  <span className="percentage">
+                    {Math.round((f.count / members.length) * 100) || 0}%
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -81,6 +154,7 @@ const ClubProfile = () => {
           <div className="stat-card upcoming-meetings-card">
             <h3 className="card-title">UPCOMING MEETINGS</h3>
 
+            {/* Hardcoded sample meetings */}
             <div className="meeting">
               <div className="meeting-date">
                 <span className="day">14</span>
@@ -126,55 +200,49 @@ const ClubProfile = () => {
           <div className="section-header">
             <h2>Member Management</h2>
             <div className="filters">
-              <select className="faculty-select">
+              <select
+                className="faculty-select"
+                value={selectedFaculty}
+                onChange={(e) => setSelectedFaculty(e.target.value)}
+              >
                 <option>ALL FACULTIES</option>
-                <option>Arts & Humanities</option>
-                <option>Engineering</option>
-                <option>Business</option>
-                <option>Science</option>
-                <option>Law</option>
-                <option>Medicine</option>
+                {facultyArray.map((f) => (
+                  <option key={f.faculty}>{f.faculty}</option>
+                ))}
               </select>
-              <input type="text" placeholder="Search members..." className="member-search-input" />
+              <input
+                type="text"
+                placeholder="Search members..."
+                className="member-search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
 
           <div className="members-list">
-            <div className="member-row">
-              <div className="member-details">
-                <div className="avatar-small">👨🏻‍💼</div>
-                <div>
-                  <div className="member-name">Elena Rodriguez</div>
-                  <div className="member-title">Senior Editor • Arts & Hum.</div>
+            {filteredMembers.map((member) => (
+              <div className="member-row" key={member.id}>
+                <div className="member-details">
+                  <div className="avatar-small">
+                    {member.avatarUrl ? (
+                      <img
+                        src={member.avatarUrl}
+                        alt={member.name}
+                        style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+                      />
+                    ) : (
+                      "👤"
+                    )}
+                  </div>
+                  <div>
+<div className="member-name">{member.name || `${member.firstName || ""} ${member.lastName || ""}`.trim() || "Unnamed"}</div>                    <div className="member-title">{member.faculty || "Other"}</div>
+                  </div>
                 </div>
+                <span className="status-badge active">ACTIVE MEMBER</span>
+                <div className="action-icon">👤</div>
               </div>
-              <span className="status-badge active">ACTIVE MEMBER</span>
-              <div className="action-icon">👤</div>
-            </div>
-
-            <div className="member-row">
-              <div className="member-details">
-                <div className="avatar-small">👩🏽</div>
-                <div>
-                  <div className="member-name">Julian Thorne</div>
-                  <div className="member-title">Member • Science</div>
-                </div>
-              </div>
-              <span className="status-badge active">ACTIVE MEMBER</span>
-              <div className="action-icon">👤</div>
-            </div>
-
-            <div className="member-row">
-              <div className="member-details">
-                <div className="avatar-small">🧔🏻</div>
-                <div>
-                  <div className="member-name">Marcus Vane</div>
-                  <div className="member-title">Member • Business</div>
-                </div>
-              </div>
-              <span className="status-badge active">ACTIVE MEMBER</span>
-              <div className="action-icon">👤</div>
-            </div>
+            ))}
           </div>
         </div>
       </main>

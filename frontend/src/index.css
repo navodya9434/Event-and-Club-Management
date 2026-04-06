@@ -1,6 +1,10 @@
-/* index.css */
-body {
+html, body, #root {
   margin: 0;
-  font-family: 'DM Sans', sans-serif;
-  background-color: #f7f5ff;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
 }

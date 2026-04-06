@@ -45,9 +45,11 @@ function App() {
       <Route path="/past-event" element={<PastEvent />} />
 
       <Route path="/club-dashboard" element={<ClubDashboard />} />
-<Route path="/club-profile/:clubId" element={<ClubProfile />} />      <Route path="/member-management" element={<MemberManagement />} />
-      <Route path="/staff" element={<Staff />} />
-      <Route path="/meetings" element={<Meetings />} />
+<Route path="/club-profile/:clubId" element={<ClubProfile />} />     
+<Route path="/member-management/:clubId" element={<MemberManagement />} />
+<Route path="/staff/:clubId" element={<Staff />} />
+      <Route path="/meetings/:clubId" element={<Meetings />} />
+      <Route path="/club/:clubId" element={<ClubProfile />} />
 
       <Route path="/login" element={<Login />} />
       <Route path="/student-dashboard" element={<StudentDashboard />} />

@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import './Meetings.css';
 
 const MeetingsManagement = () => {
+  const { clubId } = useParams(); // Get clubId from URL
+  const [meetings, setMeetings] = useState([]);
+
   const [audience, setAudience] = useState('both');
   const [meetingData, setMeetingData] = useState({
     title: '',
@@ -10,13 +15,14 @@ const MeetingsManagement = () => {
     location: '',
   });
   const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState({ show: false, message: '' });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
     // Prevent non-letter characters for title
     if (name === 'title') {
-      if (/[^A-Za-z ]/.test(value)) return; // ignore invalid input
+      if (/[^A-Za-z ]/.test(value)) return;
     }
 
     setMeetingData({ ...meetingData, [name]: value });
@@ -25,39 +31,55 @@ const MeetingsManagement = () => {
   const validateForm = () => {
     let newErrors = {};
 
-    // Title validation: letters and spaces only
     if (!meetingData.title.trim()) newErrors.title = "Meeting title is required";
     else if (!/^[A-Za-z ]+$/.test(meetingData.title.trim()))
       newErrors.title = "Only letters and spaces allowed in title";
 
-    // Date & Time validation
     if (!meetingData.date) newErrors.date = "Date is required";
     if (!meetingData.time) newErrors.time = "Time is required";
+
     if (meetingData.date && meetingData.time) {
       const now = new Date();
       const selectedDateTime = new Date(meetingData.date + 'T' + meetingData.time);
       if (selectedDateTime < now) newErrors.date = "Date & time cannot be in the past";
     }
 
-    // Location
     if (!meetingData.location.trim()) newErrors.location = "Location/Link is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Scheduled Meeting:", { ...meetingData, audience });
-      alert("Meeting scheduled successfully! (Check console for data)");
+    if (!validateForm()) return;
+
+    const token = localStorage.getItem("token");
+    const payload = {
+      clubId,
+      title: meetingData.title,
+      dateTime: `${meetingData.date}T${meetingData.time}`,
+      location: meetingData.location,
+      audience: audience.toUpperCase(),
+    };
+
+    try {
+      const res = await axios.post("http://localhost:8080/api/meetings", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Add returned meeting to state
+      setMeetings(prev => [...prev, res.data]);
+      setToast({ show: true, message: "Meeting Scheduled Successfully!" });
+      setTimeout(() => setToast({ show: false, message: "" }), 3000);
+
       setMeetingData({ title: '', date: '', time: '', location: '' });
-      setErrors({});
       setAudience('both');
+    } catch (err) {
+      console.error("Error scheduling meeting:", err);
     }
   };
 
-  // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -66,7 +88,6 @@ const MeetingsManagement = () => {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  // Get current time in HH:MM format
   const getCurrentTime = () => {
     const now = new Date();
     const hh = String(now.getHours()).padStart(2, '0');
@@ -74,8 +95,35 @@ const MeetingsManagement = () => {
     return `${hh}:${mm}`;
   };
 
+  // Fetch all meetings for the club on load
+  useEffect(() => {
+    if (!clubId) return;
+
+    const fetchMeetings = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await axios.get(`http://localhost:8080/api/meetings/club/${clubId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setMeetings(res.data);
+      } catch (err) {
+        console.error("Error fetching meetings:", err);
+      }
+    };
+
+    fetchMeetings();
+  }, [clubId]);
+
+  // Separate upcoming and past meetings
+  const now = new Date();
+  const upcomingMeetings = meetings.filter(m => new Date(m.dateTime) >= now).sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+  const pastMeetings = meetings.filter(m => new Date(m.dateTime) < now).sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
   return (
     <div className="meetings-management-page">
+      {/* Toast */}
+      {toast.show && <div className="m-toast">{toast.message}</div>}
+
       {/* Sidebar */}
       <aside className="m-sidebar">
         <div className="m-sidebar-header">
@@ -97,19 +145,13 @@ const MeetingsManagement = () => {
 
       {/* Main Content */}
       <main className="m-main-content">
-        {/* Top Bar */}
         <header className="m-top-bar">
           <div className="m-top-left"></div>
           <div className="m-search-container">
-            <input
-              type="text"
-              placeholder="Search archives..."
-              className="m-search-input"
-            />
+            <input type="text" placeholder="Search archives..." className="m-search-input" />
           </div>
         </header>
 
-        {/* Page Header */}
         <div className="m-page-header">
           <h1>Meetings Management</h1>
           <p>Coordinate schedules, manage attendance, and archive historical scholarly records.</p>
@@ -221,71 +263,45 @@ const MeetingsManagement = () => {
           {/* Active Agenda */}
           <div className="m-active-agenda-card">
             <div className="m-agenda-header">
-              <div className="m-agenda-title">
-                <span>📅</span> Active Agenda
-              </div>
-              <span className="m-scheduled-badge">3 SCHEDULED</span>
+              <div className="m-agenda-title"><span>📅</span> Active Agenda</div>
+              <span className="m-scheduled-badge">{upcomingMeetings.length} SCHEDULED</span>
             </div>
-
-            <div className="m-agenda-item">
-              <div className="m-date-box">
-                <span className="m-day">24</span>
-                <span className="m-month">OCT</span>
-              </div>
-              <div className="m-agenda-details">
-                <div className="m-agenda-name">Quarterly Review Session</div>
-                <div className="m-agenda-meta">
-                  <span>🕒 14:00 PM</span>
-                  <span>📍 Main Library, Room 2B</span>
+            {upcomingMeetings.map(m => (
+              <div className="m-agenda-item" key={m.id}>
+                <div className="m-date-box">
+                  <span className="m-day">{new Date(m.dateTime).getDate()}</span>
+                  <span className="m-month">{new Date(m.dateTime).toLocaleString('default', { month: 'short' }).toUpperCase()}</span>
                 </div>
-              </div>
-              <span className="m-tag m-staff-only">STAFF ONLY</span>
-            </div>
-
-            <div className="m-agenda-item">
-              <div className="m-date-box">
-                <span className="m-day">28</span>
-                <span className="m-month">OCT</span>
-              </div>
-              <div className="m-agenda-details">
-                <div className="m-agenda-name">Open Member Symposium</div>
-                <div className="m-agenda-meta">
-                  <span>🕒 10:30 AM</span>
-                  <span>🔗 meet.google.com/abc-xyz</span>
+                <div className="m-agenda-details">
+                  <div className="m-agenda-name">{m.title}</div>
+                  <div className="m-agenda-meta">
+                    <span>🕒 {new Date(m.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>📍 {m.location}</span>
+                  </div>
                 </div>
+                <span className={`m-tag ${m.audience === 'STAFF' ? 'm-staff-only' : m.audience === 'MEMBERS' ? 'm-all-members' : 'm-both'}`}>
+                  {m.audience}
+                </span>
               </div>
-              <span className="m-tag m-all-members">ALL MEMBERS</span>
-            </div>
+            ))}
           </div>
 
           {/* Historical Records */}
           <div className="m-historical-records-card">
             <div className="m-records-header">
-              <div className="m-records-title">
-                <span>🕒</span> Historical Records
-              </div>
+              <div className="m-records-title"><span>🕒</span> Historical Records</div>
               <a href="#" className="m-view-all">VIEW ALL ARCHIVE</a>
             </div>
-
-            <div className="m-records-table">
-              <div className="m-record-row">
+            {pastMeetings.map(m => (
+              <div className="m-record-row" key={m.id}>
                 <div className="m-record-info">
-                  <div className="m-event-name">Founders' Annual Gala Planning</div>
-                  <div className="m-event-code">EVENT CODE: #2023-45A</div>
+                  <div className="m-event-name">{m.title}</div>
+                  <div className="m-event-code">MEETING ID: #{m.id}</div>
                 </div>
-                <div className="m-record-date">Oct 12, 2023</div>
+                <div className="m-record-date">{new Date(m.dateTime).toLocaleDateString()}</div>
                 <div className="m-status m-archived">ARCHIVED</div>
               </div>
-
-              <div className="m-record-row">
-                <div className="m-record-info">
-                  <div className="m-event-name">Drafting Constitutional Amendments</div>
-                  <div className="m-event-code">EVENT CODE: #2023-44C</div>
-                </div>
-                <div className="m-record-date">Oct 08, 2023</div>
-                <div className="m-status m-recorded">RECORDED</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </main>

@@ -102,7 +102,7 @@ const StudentDashboard = () => {
                             margin: '15px 0',
                             cursor: 'pointer'
                         }}
-                        onClick={() => navigate('/event-dashboard')}
+                        onClick={() => navigate('/e-dashboard')}
                     >
                         <h3>📅 Event Organizer Dashboard</h3>
                         <p>Create and manage events, track registrations</p>

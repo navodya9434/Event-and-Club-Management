@@ -323,3 +323,28 @@
   font-size: 12px;
   margin-top: 2px;
 }
+
+/* Toast Notification */
+.ss-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2563eb; /* blue gradient alternative */
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 0;
+  animation: toastInOut 3s forwards;
+}
+
+/* Fade-in & fade-out animation */
+@keyframes toastInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}

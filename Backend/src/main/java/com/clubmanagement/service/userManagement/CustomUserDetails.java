@@ -25,7 +25,9 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
-
+ public Long getEventOrgId() {
+        return user.getEventOrgId(); // assuming User entity has getEventOrgId()
+    }
     @Override
     public String getPassword() {
         return user.getPassword();

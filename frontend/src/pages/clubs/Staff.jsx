@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Staff.css';
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const StaffProfiles = () => {
+
+  const { clubId } = useParams(); // ✅ get clubId
+const [staffMembers, setStaffMembers] = useState([]); // ✅ replace static data
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
@@ -13,50 +19,30 @@ const StaffProfiles = () => {
     location: '',
   });
   const [errors, setErrors] = useState({});
+  const [toastMessage, setToastMessage] = useState('');
 
-  const staffMembers = [
-    {
-      id: 1,
-      name: "Dr. Julian Vance",
-      age: "45",
-      role: "FACULTY ADVISOR",
-      roleColor: "faculty",
-      email: "j.vance@university.edu",
-      location: "Hall of Letters, Rm 402",
-      avatar: "https://i.pravatar.cc/300?u=julian",
-    },
-    {
-      id: 2,
-      name: "Elena Rodriguez",
-      age: "22",
-      role: "PRESIDENT",
-      roleColor: "president",
-      email: "e.rodriguez@student.edu",
-      phone: "+1 (555) 092-4412",
-      avatar: "https://i.pravatar.cc/300?u=elena",
-    },
-    {
-      id: 3,
-      name: "Marcus Chen",
-      age: "21",
-      role: "SECRETARY",
-      roleColor: "secretary",
-      email: "m.chen@student.edu",
-      schedule: "Mon-Fri: 2PM - 5PM",
-      avatar: "https://i.pravatar.cc/300?u=marcus",
-    },
-    {
-      id: 4,
-      name: "Sarah Jenkins",
-      age: "23",
-      role: "TREASURER",
-      roleColor: "treasurer",
-      email: "s.jenkins@student.edu",
-      responsibility: "Budget Oversights",
-      avatar: "https://i.pravatar.cc/300?u=sarah",
-    },
-  ];
+  useEffect(() => {
+  const fetchStaff = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
+      const res = await axios.get(
+        `http://localhost:8080/api/staff?clubId=${clubId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setStaffMembers(res.data);
+    } catch (err) {
+      console.error("Error fetching staff:", err);
+    }
+  };
+
+  if (clubId) fetchStaff();
+}, [clubId]);
+
+  
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -121,20 +107,57 @@ const StaffProfiles = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log("New Staff Added:", { ...formData, avatar: previewImage });
-      alert("Staff member added successfully! (Check console for data)");
-      setShowAddForm(false);
-      setPreviewImage(null);
-      setFormData({ name: '', age: '', position: '', email: '', phone: '', location: '' });
-      setErrors({});
-    }
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
+  try {
+    const token = localStorage.getItem("token");
+
+    const data = new FormData();
+    data.append("clubId", clubId);
+    data.append("fullName", formData.name);
+    data.append("age", formData.age);
+    data.append("position", formData.position);
+    data.append("email", formData.email);
+    data.append("phone", formData.phone);
+    data.append("officeLocation", formData.location);
+
+    const fileInput = document.querySelector(".ss-file-input");
+    data.append("image", fileInput.files[0]);
+
+    await axios.post("http://localhost:8080/api/staff", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    // ✅ refresh list
+    const res = await axios.get(
+      `http://localhost:8080/api/staff?clubId=${clubId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setStaffMembers(res.data);
+
+    setToastMessage("Submitted successfully!");
+    setFormData({ name: '', age: '', position: '', email: '', phone: '', location: '' });
+    setPreviewImage(null);
+    setErrors({});
+    setShowAddForm(false);
+
+    setTimeout(() => setToastMessage(''), 3000);
+
+  } catch (err) {
+    console.error(err);
+    alert("Error saving staff");
+  }
+};
   return (
     <div className="ss-staff-profiles-page">
+      {/* Toast Message */}
+      {toastMessage && <div className="ss-toast">{toastMessage}</div>}
+
       {/* Sidebar */}
       <aside className="ss-sidebar">
         <div className="ss-logo">
@@ -176,27 +199,44 @@ const StaffProfiles = () => {
           {staffMembers.map((staff) => (
             <div key={staff.id} className="ss-staff-card">
               <div className="ss-avatar-container">
-                <img src={staff.avatar} alt={staff.name} className="ss-staff-avatar" />
-              </div>
+  <img
+    src={`http://localhost:8080/${staff.profilePhotoPath}`}
+    alt={staff.fullName}
+    className="ss-staff-avatar"
+  />
+</div>
 
-              <div className="ss-staff-info">
-                <div className="ss-name-age">
-                  <h3>{staff.name}</h3>
-                  <span className="ss-age">{staff.age} Yrs</span>
-                </div>
+<div className="ss-staff-info">
+  <div className="ss-name-age">
+    <h3>{staff.fullName}</h3>
+    <span className="ss-age">{staff.age} Yrs</span>
+  </div>
 
-                <span className={`ss-role-badge ${staff.roleColor}`}>
-                  {staff.role}
-                </span>
+  <span className="ss-role-badge">
+    {staff.position}
+  </span>
 
-                <div className="ss-contact-info">
-                  <div className="ss-contact-row"><span className="ss-icon">✉️</span><span>{staff.email}</span></div>
-                  {staff.phone && <div className="ss-contact-row"><span className="ss-icon">📞</span><span>{staff.phone}</span></div>}
-                  {staff.location && <div className="ss-contact-row"><span className="ss-icon">📍</span><span>{staff.location}</span></div>}
-                  {staff.schedule && <div className="ss-contact-row"><span className="ss-icon">🕒</span><span>{staff.schedule}</span></div>}
-                  {staff.responsibility && <div className="ss-contact-row"><span className="ss-icon">📋</span><span>{staff.responsibility}</span></div>}
-                </div>
-              </div>
+  <div className="ss-contact-info">
+    <div className="ss-contact-row">
+      <span className="ss-icon">✉️</span>
+      <span>{staff.email}</span>
+    </div>
+
+    {staff.phone && (
+      <div className="ss-contact-row">
+        <span className="ss-icon">📞</span>
+        <span>{staff.phone}</span>
+      </div>
+    )}
+
+    {staff.officeLocation && (
+      <div className="ss-contact-row">
+        <span className="ss-icon">📍</span>
+        <span>{staff.officeLocation}</span>
+      </div>
+    )}
+  </div>
+</div>
             </div>
           ))}
 

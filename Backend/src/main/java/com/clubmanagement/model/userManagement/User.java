@@ -14,7 +14,8 @@ public class User {
 
     @Column(unique = true, nullable = false)
 private String email;
-
+@Column(name = "event_org_id")
+private Long eventOrgId;
 @Column(unique = true, nullable = false)
 private String username; 
 
@@ -33,6 +34,14 @@ private String password;
     public void setUserRoles(List<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
+
+    public Long getEventOrgId() {
+    return eventOrgId;
+}
+
+public void setEventOrgId(Long eventOrgId) {
+    this.eventOrgId = eventOrgId;
+}
 
     // Helper method (optional but useful)
     public void addRole(Role role) {
