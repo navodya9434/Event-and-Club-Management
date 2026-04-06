@@ -49,14 +49,23 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         .cors()
         .and()
         .authorizeHttpRequests(auth -> auth
+    // ✅ PUBLIC FIRST
+    .requestMatchers("/api/clubs/accepted/**").permitAll()
+            .requestMatchers("/uploads/**").permitAll()
             .requestMatchers("/api/login/**").permitAll()
             .requestMatchers("/api/register/**").permitAll()
-            .requestMatchers("/api/student/**").hasRole("STUDENT")
-            .requestMatchers("/uploads/**").permitAll()  // ✅ ADD THIS LINE
 
-            .requestMatchers("/api/clubs/**").authenticated() // ✅ allow JWT-authenticated users
-            .anyRequest().authenticated()
-        )
+            // --- SPECIFIC CLUB ENDPOINTS ---
+.requestMatchers("/api/clubs/members").permitAll()            .requestMatchers("/api/student/**").hasRole("STUDENT")
+            
+            // --- ALL OTHER CLUB ENDPOINTS ---
+            .requestMatchers("/api/clubs/**").authenticated()
+            .requestMatchers("/api/staff/**").authenticated()
+            .requestMatchers("/api/meetings/**").authenticated()
+            
+
+    .anyRequest().authenticated()
+)
         .formLogin().disable()
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
