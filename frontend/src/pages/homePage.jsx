@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import home2 from "../assets/home2.jpg";
 import home3 from "../assets/home3.jpg";
 import home4 from "../assets/home4.jpg";
-import { Link } from "react-router-dom";
 
 
 
@@ -122,7 +121,7 @@ const AdTickerBar = () => {
       </div>
     </div>
   );
-};
+}
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 const Navbar = () => {
@@ -147,7 +146,7 @@ const Navbar = () => {
 
     if (item === "Home") path = "/";
     else if (item === "Events") path = "/events";
-    else if (item === "About Us") path = "/create-club";
+    else if (item === "About Us") path = "/club-dashboard";
     else if (item === "Clubs") path = "/clubs";
     else if (item === "Contact Us") path = "/e-dashboard";
 
