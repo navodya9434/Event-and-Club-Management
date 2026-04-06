@@ -25,36 +25,55 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-protected void doFilterInternal(HttpServletRequest request,
-                                HttpServletResponse response,
-                                FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-    // --- 1️⃣ Skip JWT filter for uploads folder ---
-    String path = request.getRequestURI();
-    if (path.startsWith("/uploads/")) {
-        filterChain.doFilter(request, response);
-        return;
-    }
+        String path = request.getRequestURI();
+        System.out.println("JwtAuthFilter - Request Path: " + path); // 🔍 DEBUG
 
-    // --- 2️⃣ Regular JWT authentication ---
-    String authHeader = request.getHeader("Authorization");
-    String username = null;
-    String token = null;
-
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-        token = authHeader.substring(7);
-        if (jwtUtil.validateToken(token)) {
-            username = jwtUtil.extractUsername(token);
+        // --- 1️⃣ Bypass security for public endpoints ---
+        if (isPublicEndpoint(path)) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        // --- 2️⃣ JWT authentication ---
+        String authHeader = request.getHeader("Authorization");
+        String username = null;
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                if (jwtUtil.validateToken(token)) {
+                    username = jwtUtil.extractUsername(token);
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid JWT token: " + e.getMessage());
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid JWT token");
+                return;
+            }
+        }
+
+        // --- 3️⃣ Set Authentication in SecurityContext ---
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+
+        // --- 4️⃣ Continue filter chain ---
+        filterChain.doFilter(request, response);
     }
 
-    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+    /**
+     * Returns true if the path should bypass JWT authentication.
+     */
+    private boolean isPublicEndpoint(String path) {
+        return path.contains("/api/clubs/accepted")  // public: get accepted clubs
+                || path.startsWith("/uploads/")      // public: static files
+                || path.contains("/login")           // public: login endpoint
+                || path.contains("/register");       // public: registration
     }
-
-    filterChain.doFilter(request, response);
 }
-} 
