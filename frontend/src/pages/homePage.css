@@ -3,6 +3,43 @@
 /* ─── Google Fonts ──────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap');
 
+/* Fix full-width layout - Remove unwanted side spaces */
+.page-wrapper,
+.main-content,
+.hero,
+.about,
+.services,
+.events-section,
+.stats {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Make sure sections that need centering use proper container */
+.hero__content,
+.about,
+.services,
+.events-section {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+/* Hero needs special treatment because it's full-bleed */
+.hero {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.hero__content {
+  padding-left: 32px;
+  padding-right: 32px;
+}
 /* ─── CSS Variables ─────────────────────────────────────────────────────────── */
 :root {
   --purple-dark: #2d1b69;
@@ -23,6 +60,8 @@
   --ticker-height: 44px;
   --navbar-height: 76px;
 }
+
+
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
