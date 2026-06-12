@@ -1,0 +1,163 @@
+.feedback-list-container {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f7ff;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.feedback-list-title {
+  margin: 0 0 15px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-loading {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-style: italic;
+}
+
+.feedback-empty {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.feedback-item {
+  background: white;
+  padding: 14px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.feedback-author {
+  flex: 1;
+}
+
+.feedback-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.feedback-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: right;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.star-filled {
+  color: #fbbf24;
+  filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.3));
+}
+
+.star-empty {
+  color: #e5e7eb;
+}
+
+.feedback-message {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.feedback-reply {
+  background: #f0f4ff;
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+  margin-top: 10px;
+}
+
+.reply-header {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #667eea;
+  margin-bottom: 6px;
+}
+
+.reply-message {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.3;
+}
+
+/* Scrollbar styling */
+.feedback-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.feedback-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.feedback-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.feedback-list::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .feedback-list-container {
+    padding: 12px;
+    margin-top: 15px;
+  }
+
+  .feedback-item {
+    padding: 10px;
+  }
+
+  .feedback-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feedback-rating {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .feedback-message {
+    font-size: 0.85rem;
+  }
+}
